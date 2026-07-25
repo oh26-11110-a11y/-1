@@ -1,0 +1,3701 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🍊🥕 제주 농부 지원 플랫폼</title>
+<style>
+/* ==========================================================
+   제주 감귤 농부 지원 플랫폼 - 스타일
+   메인 색상 : 주황(#FF8A00), 초록(#4CAF50), 흰색
+   컨셉      : 카드형 UI, 둥근 버튼, 그림자, 부드러운 애니메이션
+   ========================================================== */
+
+/* ---------- 기본 리셋 ---------- */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --orange: #FF8A00;
+  --orange-light: #FFB74D;
+  --orange-bg: #FFF3E0;
+  --green: #4CAF50;
+  --green-dark: #388E3C;
+  --green-bg: #E8F5E9;
+  --white: #FFFFFF;
+  --text: #333333;
+  --text-light: #777777;
+  --up: #E53935;      /* 시세 상승 = 붉은색 */
+  --down: #1E88E5;    /* 시세 하락 = 파란색 */
+  --shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+  --shadow-hover: 0 10px 24px rgba(0, 0, 0, 0.15);
+  --radius: 16px;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Segoe UI', 'Malgun Gothic', '맑은 고딕', sans-serif;
+  color: var(--text);
+  background: #FFFDF8;
+  line-height: 1.6;
+}
+
+img { max-width: 100%; }
+a { text-decoration: none; color: inherit; }
+button { font-family: inherit; cursor: pointer; }
+
+/* ---------- 공통 레이아웃 ---------- */
+.container { max-width: 1200px; margin: 0 auto; padding: 0 16px; }
+
+.section { padding: 40px 0; }
+
+.section-title {
+  font-size: 1.5rem;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.section-title::before {
+  content: "";
+  display: inline-block;
+  width: 6px;
+  height: 26px;
+  border-radius: 4px;
+  background: linear-gradient(180deg, var(--orange), var(--green));
+}
+
+/* ---------- 버튼 ---------- */
+.btn {
+  display: inline-block;
+  border: none;
+  border-radius: 999px;          /* 둥근 버튼 */
+  padding: 10px 22px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  transition: all 0.25s ease;    /* 부드러운 전환 */
+  box-shadow: var(--shadow);
+}
+.btn:hover { transform: translateY(-3px); box-shadow: var(--shadow-hover); }
+.btn-orange { background: var(--orange); color: var(--white); }
+.btn-orange:hover { background: #F57C00; }
+.btn-green { background: var(--green); color: var(--white); }
+.btn-green:hover { background: var(--green-dark); }
+.btn-white { background: var(--white); color: var(--orange); border: 2px solid var(--orange); }
+.btn-white:hover { background: var(--orange-bg); }
+.btn-small { padding: 6px 14px; font-size: 0.85rem; }
+
+/* ---------- 카드 공통 ---------- */
+.card {
+  background: var(--white);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 20px;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+.card:hover { transform: scale(1.03); box-shadow: var(--shadow-hover); } /* Hover 시 확대 */
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); /* PC : 4열 */
+  gap: 20px;
+}
+
+/* ---------- 스크롤 애니메이션 ---------- */
+.fade-in {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.fade-in.visible { opacity: 1; transform: translateY(0); }
+
+/* ==========================================================
+   Header
+   ========================================================== */
+header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--white);
+  box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+}
+.header-inner {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 16px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: var(--orange);
+  white-space: nowrap;
+  cursor: pointer;
+}
+.logo .logo-icon { font-size: 1.6rem; }
+.logo .site-sub { font-size: 0.7rem; color: var(--green); font-weight: 600; }
+
+/* 검색창 */
+.search-box { position: relative; flex: 1; max-width: 340px; }
+.search-box input {
+  width: 100%;
+  padding: 10px 40px 10px 16px;
+  border: 2px solid var(--orange-light);
+  border-radius: 999px;
+  font-size: 0.9rem;
+  outline: none;
+  transition: border-color 0.25s;
+}
+.search-box input:focus { border-color: var(--orange); }
+.search-box .search-icon {
+  position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
+  color: var(--orange);
+}
+/* 실시간 검색 결과 드롭다운 */
+.search-results {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0; right: 0;
+  background: var(--white);
+  border-radius: 12px;
+  box-shadow: var(--shadow-hover);
+  max-height: 320px;
+  overflow-y: auto;
+  display: none;
+  z-index: 200;
+}
+.search-results.open { display: block; }
+.search-result-item {
+  padding: 10px 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.9rem;
+  transition: background 0.2s;
+}
+.search-result-item:hover { background: var(--orange-bg); }
+.search-result-item .tag {
+  font-size: 0.7rem;
+  padding: 2px 8px;
+  border-radius: 999px;
+  color: var(--white);
+  flex-shrink: 0;
+}
+.tag-variety { background: var(--orange); }
+.tag-pest { background: var(--green); }
+.tag-price { background: #8D6E63; }
+.search-empty { padding: 14px; color: var(--text-light); font-size: 0.85rem; text-align: center; }
+
+/* 메뉴 */
+nav.main-nav { margin-left: auto; }
+nav.main-nav ul { display: flex; list-style: none; gap: 4px; }
+nav.main-nav a {
+  display: block;
+  padding: 8px 12px;
+  border-radius: 999px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: all 0.25s;
+  white-space: nowrap;
+}
+nav.main-nav a:hover { background: var(--orange-bg); color: var(--orange); }
+nav.main-nav a.active { background: var(--orange); color: var(--white); }
+
+/* 햄버거 버튼 (모바일) */
+.hamburger {
+  display: none;
+  margin-left: auto;
+  background: none;
+  border: none;
+  font-size: 1.6rem;
+  color: var(--orange);
+}
+
+/* ==========================================================
+   지역별 날씨 배너
+   ========================================================== */
+.weather-banner {
+  background: linear-gradient(90deg, var(--green-bg), var(--orange-bg));
+  padding: 14px 0;
+}
+.weather-cards {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+.weather-card {
+  background: var(--white);
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  transition: transform 0.25s;
+}
+.weather-card:hover { transform: translateY(-3px); }
+.weather-card .w-icon { font-size: 1.9rem; }
+.weather-card .w-region { font-weight: 700; font-size: 0.9rem; }
+.weather-card .w-info { font-size: 0.8rem; color: var(--text-light); }
+.weather-card .w-temp { color: var(--orange); font-weight: 700; }
+.weather-notice {
+  text-align: center;
+  font-size: 0.85rem;
+  margin-top: 10px;
+  color: var(--green-dark);
+  font-weight: 600;
+}
+.weather-error { color: var(--up); }
+
+/* ==========================================================
+   메인 배너
+   ========================================================== */
+.hero {
+  background: linear-gradient(135deg, #FFB347 0%, var(--orange) 55%, #F57C00 100%);
+  color: var(--white);
+  text-align: center;
+  padding: 70px 16px;
+  position: relative;
+  overflow: hidden;
+}
+.hero .hero-emoji {
+  font-size: 5rem;
+  display: block;
+  margin-bottom: 12px;
+  animation: float 3s ease-in-out infinite;
+}
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-12px); }
+}
+.hero h1 { font-size: 2rem; margin-bottom: 10px; text-shadow: 0 2px 6px rgba(0,0,0,0.15); }
+.hero p { opacity: 0.95; margin-bottom: 24px; }
+.hero-buttons { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; }
+.hero-buttons .btn { background: var(--white); color: var(--orange); }
+.hero-buttons .btn:hover { background: var(--orange-bg); }
+
+/* ---------- 오늘의 농사 팁 ---------- */
+.tip-card {
+  background: var(--green-bg);
+  border-left: 6px solid var(--green);
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  box-shadow: var(--shadow);
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+}
+.tip-card .tip-icon { font-size: 1.8rem; }
+.tip-card strong { color: var(--green-dark); }
+
+/* ---------- 오늘의 시세(메인) ---------- */
+.price-summary-card { text-align: center; cursor: pointer; }
+.price-summary-card .p-name { font-weight: 700; font-size: 1.05rem; margin-bottom: 6px; }
+.price-summary-card .p-price { font-size: 1.25rem; font-weight: 800; color: var(--text); }
+.price-summary-card .p-unit { font-size: 0.8rem; color: var(--text-light); }
+.change-up { color: var(--up); font-weight: 700; }
+.change-down { color: var(--down); font-weight: 700; }
+.change-flat { color: var(--text-light); font-weight: 700; }
+
+/* ---------- 바로가기 카드 ---------- */
+.shortcut-card { text-align: center; cursor: pointer; }
+.shortcut-card .s-emoji { font-size: 2.6rem; display: block; margin-bottom: 8px; }
+.shortcut-card .s-name { font-weight: 700; }
+.shortcut-card .s-desc { font-size: 0.8rem; color: var(--text-light); margin-top: 4px; }
+
+/* ---------- 월별 농사 일정(메인) ---------- */
+.month-strip {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 12px;
+}
+.month-cell {
+  background: var(--white);
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  padding: 12px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.25s;
+}
+.month-cell:hover { transform: translateY(-4px); box-shadow: var(--shadow-hover); }
+.month-cell.current { background: var(--orange); color: var(--white); }
+.month-cell .m-num { font-size: 1.1rem; font-weight: 800; }
+.month-cell .m-task { font-size: 0.75rem; color: var(--text-light); }
+.month-cell.current .m-task { color: #FFF3E0; }
+
+/* ==========================================================
+   Footer
+   ========================================================== */
+footer {
+  background: #2E3B2F;
+  color: #CFD8CF;
+  padding: 30px 16px;
+  text-align: center;
+  margin-top: 40px;
+  font-size: 0.85rem;
+}
+footer .footer-logo { font-size: 1.1rem; font-weight: 700; color: var(--orange-light); margin-bottom: 8px; }
+
+/* ==========================================================
+   페이지 전환
+   ========================================================== */
+.page { display: none; animation: pageIn 0.4s ease; }
+.page.active { display: block; }
+@keyframes pageIn {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.page-header {
+  background: linear-gradient(90deg, var(--orange-bg), var(--green-bg));
+  padding: 34px 16px;
+  text-align: center;
+}
+.page-header h2 { font-size: 1.7rem; }
+.page-header p { color: var(--text-light); }
+
+/* ==========================================================
+   품종 페이지
+   ========================================================== */
+.variety-toolbar {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+.variety-toolbar input[type="text"] {
+  flex: 1;
+  min-width: 200px;
+  padding: 10px 16px;
+  border: 2px solid var(--orange-light);
+  border-radius: 999px;
+  outline: none;
+}
+.variety-layout { display: flex; gap: 24px; align-items: flex-start; }
+
+/* 필터 사이드바 */
+.filter-panel {
+  width: 220px;
+  flex-shrink: 0;
+  background: var(--white);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 20px;
+  position: sticky;
+  top: 80px;
+}
+.filter-panel h3 { font-size: 1rem; margin-bottom: 12px; color: var(--green-dark); }
+.filter-group { margin-bottom: 16px; }
+.filter-group label { display: block; font-size: 0.85rem; font-weight: 700; margin-bottom: 6px; }
+.filter-group select {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid #DDD;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  outline: none;
+}
+
+.variety-list { flex: 1; display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+
+.variety-card { position: relative; cursor: pointer; overflow: hidden; padding: 0; }
+.variety-card .v-img {
+  height: 130px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3.4rem;
+  background: linear-gradient(135deg, var(--orange-bg), var(--green-bg));
+}
+.variety-card .v-img img { width: 100%; height: 100%; object-fit: cover; }
+.variety-card .v-body { padding: 14px 16px 18px; }
+.variety-card .v-name { font-weight: 800; font-size: 1.05rem; margin-bottom: 4px; }
+.variety-card .v-feature { font-size: 0.8rem; color: var(--text-light); margin-bottom: 8px; min-height: 2.2em; }
+.variety-card .v-meta { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
+.badge {
+  font-size: 0.7rem;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: var(--green-bg);
+  color: var(--green-dark);
+  font-weight: 700;
+}
+.badge-orange { background: var(--orange-bg); color: var(--orange); }
+.badge-custom { background: #E1F5FE; color: #0277BD; }
+.variety-card .v-price { font-weight: 800; }
+.variety-card .v-price .no-price { color: var(--text-light); font-weight: 400; font-size: 0.85rem; }
+
+/* 카드 삭제 버튼 */
+.delete-btn {
+  position: absolute;
+  top: 8px; right: 8px;
+  width: 30px; height: 30px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255,255,255,0.9);
+  color: var(--text-light);
+  font-size: 0.95rem;
+  z-index: 5;
+  transition: all 0.2s;
+  box-shadow: var(--shadow);
+}
+.delete-btn:hover { background: var(--up); color: var(--white); transform: scale(1.1); }
+
+.empty-message {
+  grid-column: 1 / -1;
+  text-align: center;
+  color: var(--text-light);
+  padding: 40px 0;
+}
+
+/* ==========================================================
+   병해충 페이지
+   ========================================================== */
+.pest-list { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+.pest-card { cursor: pointer; overflow: hidden; padding: 0; }
+.pest-card .p-img {
+  height: 110px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 3rem;
+  background: linear-gradient(135deg, var(--green-bg), #F1F8E9);
+}
+.pest-card .p-body { padding: 14px 16px 18px; }
+.pest-card .p-name { font-weight: 800; margin-bottom: 6px; }
+.pest-card .p-row { font-size: 0.8rem; margin-bottom: 4px; color: var(--text-light); }
+.pest-card .p-row b { color: var(--text); }
+
+/* ==========================================================
+   시세 페이지
+   ========================================================== */
+.sort-buttons { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
+.sort-buttons .btn.active { background: var(--green); color: var(--white); border-color: var(--green); }
+
+.price-table-wrap { overflow-x: auto; background: var(--white); border-radius: var(--radius); box-shadow: var(--shadow); }
+.price-table { width: 100%; border-collapse: collapse; min-width: 520px; }
+.price-table th, .price-table td { padding: 14px 16px; text-align: left; border-bottom: 1px solid #F0F0F0; }
+.price-table th { background: var(--orange-bg); color: #7B4B00; font-size: 0.85rem; }
+.price-table tbody tr { cursor: pointer; transition: background 0.2s; }
+.price-table tbody tr:hover { background: #FFF8EE; }
+.price-table td.num { font-weight: 700; }
+
+.chart-panel { margin-top: 30px; }
+.chart-controls { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-bottom: 14px; }
+.chart-controls select {
+  padding: 8px 14px;
+  border: 2px solid var(--orange-light);
+  border-radius: 999px;
+  outline: none;
+  font-size: 0.9rem;
+}
+.period-btn { border: 2px solid var(--green); background: var(--white); color: var(--green-dark); }
+.period-btn.active { background: var(--green); color: var(--white); }
+.chart-box {
+  background: var(--white);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 20px;
+}
+.chart-box canvas { width: 100%; height: 300px; display: block; }
+.chart-hint { font-size: 0.8rem; color: var(--text-light); margin-top: 8px; text-align: right; }
+
+/* ==========================================================
+   오늘의 할일 페이지
+   ========================================================== */
+.region-tabs { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; }
+.region-tab {
+  border: 2px solid var(--orange);
+  background: var(--white);
+  color: var(--orange);
+  border-radius: 999px;
+  padding: 8px 20px;
+  font-weight: 700;
+  transition: all 0.25s;
+}
+.region-tab:hover { transform: translateY(-2px); }
+.region-tab.active { background: var(--orange); color: var(--white); }
+
+.todo-weather-summary {
+  display: flex;
+  gap: 24px;
+  flex-wrap: wrap;
+  align-items: center;
+  background: var(--white);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 20px 24px;
+  margin-bottom: 26px;
+  font-size: 1rem;
+}
+.todo-weather-summary .big-icon { font-size: 2.6rem; }
+.todo-weather-summary .w-item b { color: var(--orange); }
+
+.todo-list { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+.todo-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--white);
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  padding: 14px 18px;
+  transition: all 0.25s;
+}
+.todo-item:hover { transform: translateX(4px); }
+.todo-item input[type="checkbox"] { width: 20px; height: 20px; accent-color: var(--green); cursor: pointer; }
+.todo-item.done label { text-decoration: line-through; color: var(--text-light); }
+.todo-item label { cursor: pointer; flex: 1; }
+.todo-item .t-emoji { font-size: 1.3rem; }
+
+.monthly-task-box {
+  background: var(--green-bg);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 20px 24px;
+}
+.monthly-task-box ul { margin-left: 20px; }
+.monthly-task-box li { margin-bottom: 6px; }
+
+/* ==========================================================
+   농사 캘린더 페이지
+   ========================================================== */
+.calendar-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  margin-bottom: 24px;
+}
+.calendar-nav h3 { font-size: 1.3rem; min-width: 150px; text-align: center; }
+.calendar-nav button {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  border: none;
+  background: var(--orange);
+  color: var(--white);
+  font-size: 1rem;
+  transition: all 0.25s;
+  box-shadow: var(--shadow);
+}
+.calendar-nav button:hover { transform: scale(1.1); }
+
+.calendar-grid-wrap {
+  background: var(--white);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 20px;
+  margin-bottom: 26px;
+}
+.calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
+.calendar-grid .day-head { text-align: center; font-weight: 700; font-size: 0.85rem; padding: 6px 0; }
+.calendar-grid .day-head.sun { color: var(--up); }
+.calendar-grid .day-head.sat { color: var(--down); }
+.calendar-cell {
+  min-height: 62px;
+  border-radius: 10px;
+  padding: 6px;
+  font-size: 0.85rem;
+  background: #FAFAFA;
+  transition: background 0.2s, transform 0.15s;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.calendar-cell:hover { background: var(--orange-bg); transform: translateY(-2px); }
+.calendar-cell.empty { background: transparent; cursor: default; }
+.calendar-cell.empty:hover { transform: none; }
+.calendar-cell.today {
+  background: var(--orange);
+  color: var(--white);
+  font-weight: 800;
+  box-shadow: var(--shadow);
+}
+.calendar-cell.sun { color: var(--up); }
+.calendar-cell.sat { color: var(--down); }
+.calendar-cell.today.sun, .calendar-cell.today.sat { color: var(--white); }
+
+/* 날짜 칸에 표시되는 할 일 색상 점 */
+.cell-date { line-height: 1; }
+.task-dots { display: flex; flex-wrap: wrap; gap: 3px; }
+.task-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+.task-dot.more { font-size: 0.6rem; font-weight: 700; color: var(--text-light); }
+.calendar-cell.today .task-dot.more { color: var(--white); }
+
+/* 카테고리 색상 범례 */
+.calendar-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-bottom: 16px;
+  font-size: 0.82rem;
+  color: var(--text-light);
+}
+.legend-item { display: flex; align-items: center; gap: 6px; }
+.legend-dot { width: 11px; height: 11px; border-radius: 50%; flex-shrink: 0; }
+
+/* 일별 할 일 모달 */
+.day-task-list { margin-bottom: 16px; display: flex; flex-direction: column; gap: 8px; }
+.day-task-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #FAFAFA;
+  border-radius: 10px;
+  padding: 10px 12px;
+}
+.day-task-item .dt-color { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+.day-task-item .dt-body { flex: 1; }
+.day-task-item .dt-title { font-weight: 700; font-size: 0.92rem; }
+.day-task-item .dt-cat { font-size: 0.75rem; color: var(--text-light); }
+.day-task-item .dt-memo { font-size: 0.8rem; color: var(--text-light); margin-top: 2px; }
+.day-task-item .dt-remove {
+  background: none; border: none; color: var(--text-light);
+  font-size: 0.9rem; padding: 4px; border-radius: 50%;
+}
+.day-task-item .dt-remove:hover { background: var(--orange-bg); color: var(--up); }
+.day-task-empty { color: var(--text-light); font-size: 0.85rem; margin-bottom: 16px; }
+
+.pest-warning-list { display: flex; gap: 12px; flex-wrap: wrap; }
+.pest-warning-card {
+  background: #FFF8E1;
+  border: 2px solid #FFD54F;
+  border-radius: 12px;
+  padding: 12px 18px;
+  cursor: pointer;
+  font-weight: 700;
+  transition: all 0.25s;
+  box-shadow: var(--shadow);
+}
+.pest-warning-card:hover { transform: translateY(-3px); background: #FFF3C4; }
+
+/* ==========================================================
+   모달 공통
+   ========================================================== */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 500;
+  padding: 16px;
+}
+.modal-overlay.open { display: flex; }
+.modal {
+  background: var(--white);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-hover);
+  max-width: 560px;
+  width: 100%;
+  max-height: 88vh;
+  overflow-y: auto;
+  padding: 26px;
+  position: relative;
+  animation: modalIn 0.3s ease;
+}
+@keyframes modalIn {
+  from { opacity: 0; transform: translateY(30px) scale(0.96); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+.modal .modal-close {
+  position: absolute;
+  top: 14px; right: 14px;
+  width: 34px; height: 34px;
+  border-radius: 50%;
+  border: none;
+  background: #F5F5F5;
+  font-size: 1rem;
+  transition: all 0.2s;
+}
+.modal .modal-close:hover { background: var(--orange); color: var(--white); }
+.modal h3 { margin-bottom: 14px; color: var(--green-dark); }
+.modal .detail-img {
+  height: 150px;
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 4rem;
+  background: linear-gradient(135deg, var(--orange-bg), var(--green-bg));
+  margin-bottom: 14px;
+  overflow: hidden;
+}
+.modal .detail-img img { width: 100%; height: 100%; object-fit: cover; }
+.detail-row { margin-bottom: 8px; font-size: 0.92rem; }
+.detail-row b { color: var(--orange); margin-right: 6px; }
+.detail-section { margin-top: 18px; }
+.detail-section h4 {
+  font-size: 0.95rem;
+  margin-bottom: 8px;
+  color: var(--green-dark);
+  border-bottom: 2px solid var(--green-bg);
+  padding-bottom: 4px;
+}
+.detail-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+.detail-table th, .detail-table td { border: 1px solid #EEE; padding: 6px 8px; text-align: left; }
+.detail-table th { background: var(--green-bg); color: var(--green-dark); }
+.history-list { list-style: none; font-size: 0.85rem; max-height: 150px; overflow-y: auto; }
+.history-list li {
+  display: flex; justify-content: space-between;
+  padding: 5px 8px;
+  border-bottom: 1px dashed #EEE;
+}
+.modal canvas.detail-chart { width: 100%; height: 180px; display: block; }
+.chart-toggle { display: flex; gap: 8px; margin-bottom: 8px; }
+
+/* 품종 추가 폼 */
+.form-group { margin-bottom: 12px; }
+.form-group label { display: block; font-size: 0.85rem; font-weight: 700; margin-bottom: 4px; }
+.form-group label .required { color: var(--up); }
+.form-group input, .form-group select, .form-group textarea {
+  width: 100%;
+  padding: 9px 12px;
+  border: 1px solid #DDD;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  outline: none;
+  font-family: inherit;
+  transition: border-color 0.2s;
+}
+.form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--orange); }
+.form-row { display: flex; gap: 10px; }
+.form-row .form-group { flex: 1; }
+.form-error { color: var(--up); font-size: 0.8rem; margin-top: 4px; display: none; }
+.form-error.show { display: block; }
+.fertilizer-input-row { display: flex; gap: 6px; margin-bottom: 6px; }
+.fertilizer-input-row input { flex: 1; }
+.fertilizer-input-row .remove-fert {
+  border: none; background: #FFEBEE; color: var(--up);
+  border-radius: 8px; width: 34px; flex-shrink: 0;
+}
+.modal-footer { display: flex; justify-content: flex-end; gap: 10px; margin-top: 18px; }
+
+/* 수익 계산기 */
+.profit-layout { display: flex; gap: 24px; align-items: flex-start; }
+.profit-form-card, .profit-result-card { flex: 1; min-width: 0; }
+.profit-form-card .btn { width: 100%; margin-top: 6px; }
+.unit-toggle { display: flex; gap: 8px; margin-bottom: 12px; }
+.unit-toggle button {
+  flex: 1; border: 2px solid var(--orange-light); background: var(--white);
+  color: var(--orange); border-radius: 999px; padding: 8px; font-weight: 700; font-size: 0.85rem;
+  transition: all 0.2s;
+}
+.unit-toggle button.active { background: var(--orange); color: var(--white); border-color: var(--orange); }
+.profit-result-card { text-align: center; }
+.profit-result-main {
+  background: linear-gradient(135deg, var(--orange-bg), var(--green-bg));
+  border-radius: var(--radius);
+  padding: 24px 16px;
+  margin-bottom: 16px;
+}
+.profit-result-main .label { font-size: 0.9rem; color: var(--text-light); font-weight: 600; }
+.profit-result-main .value { font-size: 2.1rem; font-weight: 800; color: var(--orange); margin: 6px 0; }
+.profit-result-main .value.negative { color: var(--down); }
+.profit-result-main .sub { font-size: 0.8rem; color: var(--text-light); }
+.profit-breakdown { list-style: none; text-align: left; font-size: 0.88rem; }
+.profit-breakdown li {
+  display: flex; justify-content: space-between;
+  padding: 9px 4px; border-bottom: 1px dashed #EEE;
+}
+.profit-breakdown li:last-child { border-bottom: none; font-weight: 700; }
+.profit-empty { color: var(--text-light); font-size: 0.88rem; padding: 30px 10px; text-align: center; }
+@media (max-width: 767px) {
+  .profit-layout { flex-direction: column; }
+}
+
+/* ==========================================================
+   반응형 - 태블릿 (768 ~ 1199px)
+   ========================================================== */
+@media (max-width: 1199px) {
+  .card-grid, .pest-list { grid-template-columns: repeat(2, 1fr); } /* 카드 2열 */
+  .variety-list { grid-template-columns: repeat(2, 1fr); }
+  .variety-layout { flex-direction: column; }        /* 필터 상단 이동 */
+  .filter-panel { width: 100%; position: static; display: flex; flex-wrap: wrap; gap: 14px; }
+  .filter-panel h3 { width: 100%; margin-bottom: 0; }
+  .filter-group { flex: 1; min-width: 140px; margin-bottom: 0; }
+  .month-strip { grid-template-columns: repeat(4, 1fr); }
+  .weather-cards { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* ==========================================================
+   반응형 - 모바일 (767px 이하)
+   ========================================================== */
+@media (max-width: 767px) {
+  .header-inner { flex-wrap: wrap; }
+  .hamburger { display: block; }                     /* 햄버거 메뉴 */
+  nav.main-nav {
+    display: none;
+    width: 100%;
+    margin-left: 0;
+  }
+  nav.main-nav.open { display: block; }
+  nav.main-nav ul { flex-direction: column; gap: 2px; }
+  nav.main-nav a { text-align: center; }
+  .search-box { order: 3; max-width: 100%; width: 100%; } /* 검색창 전체 너비 */
+
+  .card-grid, .pest-list, .variety-list { grid-template-columns: 1fr; } /* 카드 1열 */
+  .month-strip { grid-template-columns: repeat(3, 1fr); }
+  .weather-cards { grid-template-columns: 1fr 1fr; }
+  .hero h1 { font-size: 1.4rem; }
+  .hero-buttons { flex-direction: column; align-items: center; } /* 버튼 세로 배치 */
+  .hero-buttons .btn { width: 80%; }
+  .todo-weather-summary { flex-direction: column; align-items: flex-start; gap: 8px; }
+  .form-row { flex-direction: column; gap: 0; }
+}
+</style>
+</head>
+<body>
+
+<!-- ==========================================================
+     Header : 로고 / 사이트명 / 검색창 / 메뉴
+     ========================================================== -->
+<header>
+  <div class="header-inner">
+    <div class="logo" onclick="navigate('home')">
+      <span class="logo-icon">🌾</span>
+      <span>제주한끼<br><span class="site-sub">제주 농부 지원 플랫폼</span></span>
+    </div>
+
+    <!-- 통합 검색창 : 품종 / 병해충 / 시세 실시간 검색 -->
+    <div class="search-box">
+      <input type="text" id="globalSearch" placeholder="작물·병해충·시세 검색" autocomplete="off">
+      <span class="search-icon">🔍</span>
+      <div class="search-results" id="searchResults"></div>
+    </div>
+
+    <button class="hamburger" id="hamburgerBtn" aria-label="메뉴 열기">☰</button>
+
+    <nav class="main-nav" id="mainNav">
+      <ul>
+        <li><a href="#home" data-page="home">홈</a></li>
+        <li><a href="#variety" data-page="variety">작물</a></li>
+        <li><a href="#pest" data-page="pest">병해충</a></li>
+        <li><a href="#price" data-page="price">시세</a></li>
+        <li><a href="#profit" data-page="profit">수익계산기</a></li>
+        <li><a href="#todo" data-page="todo">오늘의 할일</a></li>
+        <li><a href="#calendar" data-page="calendar">농사 캘린더</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<!-- ==========================================================
+     1. 메인 페이지
+     ========================================================== -->
+<main>
+<section class="page" id="page-home">
+
+  <!-- 지역별 날씨 배너 (Open-Meteo API 실시간 데이터) -->
+  <div class="weather-banner">
+    <div class="container">
+      <div class="weather-cards" id="weatherCards">
+        <!-- JS로 렌더링 -->
+      </div>
+      <div class="weather-notice" id="weatherNotice"></div>
+    </div>
+  </div>
+
+  <!-- 메인 배너 -->
+  <div class="hero">
+    <span class="hero-emoji">🌾</span>
+    <h1>"제주 농사의 모든 정보를 한 곳에서"</h1>
+    <p>감귤부터 밭작물까지, 작물 · 병해충 · 시세 · 농사 일정을 한눈에 확인하세요</p>
+    <div class="hero-buttons">
+      <button class="btn" onclick="navigate('variety')">🌾 작물 보기</button>
+      <button class="btn" onclick="navigate('pest')">🐛 병해충 보기</button>
+      <button class="btn" onclick="navigate('price')">📈 오늘의 시세 보기</button>
+    </div>
+  </div>
+
+  <!-- 오늘의 농사 팁 -->
+  <div class="container section fade-in">
+    <h2 class="section-title">💡 오늘의 농사 팁</h2>
+    <div class="tip-card" id="todayTip">
+      <span class="tip-icon">🌤️</span>
+      <div><strong>날씨 정보를 불러오는 중입니다...</strong></div>
+    </div>
+  </div>
+
+  <!-- 오늘의 시세 -->
+  <div class="container section fade-in">
+    <h2 class="section-title">📈 오늘의 시세</h2>
+    <div class="card-grid" id="homePriceCards"></div>
+    <div style="text-align:center; margin-top:20px;">
+      <button class="btn btn-orange" onclick="navigate('price')">시세 전체보기 →</button>
+    </div>
+  </div>
+
+  <!-- 품종 바로가기 -->
+  <div class="container section fade-in">
+    <h2 class="section-title">🌾 작물 바로가기</h2>
+    <div class="card-grid" id="homeVarietyCards"></div>
+  </div>
+
+  <!-- 병해충 바로가기 -->
+  <div class="container section fade-in">
+    <h2 class="section-title">🐛 병해충 바로가기</h2>
+    <div class="card-grid" id="homePestCards"></div>
+  </div>
+
+  <!-- 월별 농사 일정 -->
+  <div class="container section fade-in">
+    <h2 class="section-title">📅 월별 농사 일정</h2>
+    <div class="month-strip" id="homeMonthStrip"></div>
+  </div>
+
+</section>
+
+<!-- ==========================================================
+     2. 품종 페이지
+     ========================================================== -->
+<section class="page" id="page-variety">
+  <div class="page-header">
+    <h2>🌾 제주 농작물 정보</h2>
+    <p>감귤류부터 밭작물까지, 작물별 특징과 오늘 시세를 확인하고 나만의 작물을 등록해 보세요</p>
+  </div>
+
+  <div class="container section">
+    <!-- 검색 + 새 품종 추가 버튼 -->
+    <div class="variety-toolbar">
+      <input type="text" id="varietySearch" placeholder="작물 이름·특징 검색" autocomplete="off">
+      <button class="btn btn-green" id="addVarietyBtn">+ 새 작물 추가</button>
+    </div>
+
+    <div class="variety-layout">
+      <!-- 필터 사이드바 -->
+      <aside class="filter-panel">
+        <h3>🔎 필터</h3>
+        <div class="filter-group">
+          <label for="filterCategory">작물 종류</label>
+          <select id="filterCategory">
+            <option value="">전체</option>
+            <option value="감귤류">감귤류</option>
+            <option value="뿌리채소">뿌리채소</option>
+            <option value="엽채류">엽채류</option>
+            <option value="양념채소">양념채소</option>
+            <option value="두류">두류</option>
+            <option value="특용작물">특용작물</option>
+            <option value="과일류">과일류</option>
+            <option value="버섯류">버섯류</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label for="filterHarvest">출하시기</label>
+          <select id="filterHarvest">
+            <option value="">전체</option>
+            <option value="1">1월</option><option value="2">2월</option>
+            <option value="3">3월</option><option value="4">4월</option>
+            <option value="5">5월</option><option value="6">6월</option>
+            <option value="7">7월</option><option value="8">8월</option>
+            <option value="9">9월</option><option value="10">10월</option>
+            <option value="11">11월</option><option value="12">12월</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label for="filterTaste">맛</label>
+          <select id="filterTaste">
+            <option value="">전체</option>
+            <option value="새콤함">새콤함</option>
+            <option value="달콤함">달콤함</option>
+            <option value="새콤달콤">새콤달콤</option>
+            <option value="아삭함">아삭함</option>
+            <option value="고소함">고소함</option>
+            <option value="알싸함">알싸함</option>
+            <option value="담백함">담백함</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label for="filterDifficulty">재배 난이도</label>
+          <select id="filterDifficulty">
+            <option value="">전체</option>
+            <option value="쉬움">쉬움</option>
+            <option value="보통">보통</option>
+            <option value="어려움">어려움</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label for="filterPrice">시세 범위</label>
+          <select id="filterPrice">
+            <option value="">전체</option>
+            <option value="low">5,000원 미만</option>
+            <option value="mid">5,000 ~ 7,000원</option>
+            <option value="high">7,000원 초과</option>
+          </select>
+        </div>
+      </aside>
+
+      <!-- 품종 카드 목록 -->
+      <div class="variety-list" id="varietyList"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ==========================================================
+     3. 병해충 페이지
+     ========================================================== -->
+<section class="page" id="page-pest">
+  <div class="page-header">
+    <h2>🐛 병해충 정보</h2>
+    <p>증상 · 해결 방법 · 주의 시기 · 추천 방제 약제를 확인하세요</p>
+  </div>
+
+  <div class="container section">
+    <div class="variety-toolbar">
+      <input type="text" id="pestSearch" placeholder="병해충 이름·증상 검색" autocomplete="off">
+    </div>
+    <div class="pest-list" id="pestList"></div>
+  </div>
+</section>
+
+<!-- ==========================================================
+     4. 시세 페이지
+     ========================================================== -->
+<section class="page" id="page-price">
+  <div class="page-header">
+    <h2>📈 작물별 시세</h2>
+    <p>오늘의 시세를 비교하고 작물별 시세 추이를 확인하세요</p>
+  </div>
+
+  <div class="container section">
+    <!-- 정렬 버튼 -->
+    <div class="sort-buttons">
+      <button class="btn btn-white active" data-sort="name">이름순</button>
+      <button class="btn btn-white" data-sort="price">시세 높은순</button>
+      <button class="btn btn-white" data-sort="change">등락률순</button>
+    </div>
+
+    <!-- 오늘 시세 요약 테이블 -->
+    <div class="price-table-wrap">
+      <table class="price-table">
+        <thead>
+          <tr><th>작물</th><th>오늘 시세</th><th>전일 대비</th><th>갱신 시각</th></tr>
+        </thead>
+        <tbody id="priceTableBody"></tbody>
+      </table>
+    </div>
+
+    <!-- 시세 추이 그래프 -->
+    <div class="chart-panel">
+      <h2 class="section-title">📊 시세 추이 그래프</h2>
+      <div class="chart-controls">
+        <select id="chartVarietySelect"></select>
+        <button class="btn btn-small period-btn active" data-period="7">7일</button>
+        <button class="btn btn-small period-btn" data-period="30">30일</button>
+        <button class="btn btn-small period-btn" data-period="all">전체</button>
+      </div>
+      <div class="chart-box">
+        <canvas id="priceChart"></canvas>
+        <p class="chart-hint">※ 시세는 예시 데이터입니다. (추후 KAMIS 등 실제 경매 시세 API 연동 고려)</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==========================================================
+     5. 면적당 순수익 계산기
+     ========================================================== -->
+<section class="page" id="page-profit">
+  <div class="page-header">
+    <h2>🧮 면적당 순수익 계산기</h2>
+    <p>생산량 · 판매단가 · 총비용 · 재배면적만 입력하면 면적당 순수익을 바로 계산해 드립니다</p>
+  </div>
+
+  <div class="container section">
+    <h3 style="margin-bottom:14px;">🌾 작물별 자동 순수익 계산기</h3>
+    <p style="color:var(--text-light); font-size:0.9rem; margin-bottom:16px;">작물과 재배면적만 선택·입력하면 현재 시세를 자동으로 불러와 예상 순수익을 바로 계산해 드립니다</p>
+    <div class="profit-layout">
+      <!-- 입력 카드 (작물 선택 자동계산) -->
+      <div class="card profit-form-card">
+        <h4 style="margin-bottom:14px;">📋 입력 정보</h4>
+
+        <div class="form-group">
+          <label for="autoProfitCrop">작물 선택 <span class="required">*</span></label>
+          <select id="autoProfitCrop"></select>
+        </div>
+
+        <div class="form-group">
+          <label for="autoProfitArea">재배면적 <span class="required">*</span></label>
+          <div class="unit-toggle" id="autoProfitAreaUnit">
+            <button type="button" class="active" data-unit="pyeong">평</button>
+            <button type="button" data-unit="m2">㎡</button>
+          </div>
+          <input type="number" id="autoProfitArea" min="0" placeholder="예: 1000" inputmode="decimal">
+        </div>
+
+        <div class="form-error" id="autoProfitError">재배면적을 0보다 큰 숫자로 입력해 주세요.</div>
+      </div>
+
+      <!-- 결과 카드 -->
+      <div class="card profit-result-card" id="autoProfitResultCard">
+        <div class="profit-empty">👈 작물을 선택하고 재배면적을 입력하면<br>실시간으로 예상 순수익을 계산해 드려요 🍊</div>
+      </div>
+    </div>
+    <hr style="border:none; border-top:1px solid var(--orange-bg); margin:36px 0;">
+    <div class="profit-layout">
+      <!-- 입력 카드 -->
+      <div class="card profit-form-card">
+        <h3 style="margin-bottom:14px;">✍️ 직접 입력으로 계산하기</h3>
+
+        <div class="form-group">
+          <label for="profitYield">생산량 (kg) <span class="required">*</span></label>
+          <input type="number" id="profitYield" min="0" placeholder="예: 5000" inputmode="decimal">
+        </div>
+
+        <div class="form-group">
+          <label for="profitPrice">판매단가 (원/kg) <span class="required">*</span></label>
+          <input type="number" id="profitPrice" min="0" placeholder="예: 3000" inputmode="decimal">
+        </div>
+
+        <div class="form-group">
+          <label for="profitCost">총비용 (원) <span class="required">*</span></label>
+          <input type="number" id="profitCost" min="0" placeholder="예: 4000000" inputmode="decimal">
+        </div>
+
+        <div class="form-group">
+          <label for="profitArea">재배면적 <span class="required">*</span></label>
+          <div class="unit-toggle" id="profitAreaUnit">
+            <button type="button" class="active" data-unit="m2">㎡</button>
+            <button type="button" data-unit="ha">ha</button>
+          </div>
+          <input type="number" id="profitArea" min="0" placeholder="예: 3300" inputmode="decimal">
+        </div>
+
+        <div class="form-error" id="profitError">모든 항목을 0보다 큰 숫자로 입력해 주세요.</div>
+
+        <button class="btn btn-orange" id="profitCalcBtn">순수익 계산하기</button>
+      </div>
+
+      <!-- 결과 카드 -->
+      <div class="card profit-result-card" id="profitResultCard">
+        <div class="profit-empty">👈 왼쪽에 값을 입력하고<br>[순수익 계산하기]를 눌러보세요 🍊</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==========================================================
+     6. 오늘의 할일 페이지 (날씨 기반)
+     ========================================================== -->
+<section class="page" id="page-todo">
+  <div class="page-header">
+    <h2>✅ 오늘의 할일</h2>
+    <p>오늘의 날씨를 기반으로 해야 할 작업을 자동으로 추천해 드립니다</p>
+  </div>
+
+  <div class="container section">
+    <!-- 지역 선택 -->
+    <div class="region-tabs" id="regionTabs"></div>
+
+    <!-- 오늘 날씨 요약 -->
+    <div class="todo-weather-summary" id="todoWeatherSummary"></div>
+
+    <!-- 날씨 기반 할 일 체크리스트 -->
+    <h2 class="section-title">🌦️ 날씨 기반 오늘의 할 일</h2>
+    <ul class="todo-list" id="todoList"></ul>
+
+    <!-- 이번 달 정기 작업 (농사 캘린더 연동) -->
+    <div class="section">
+      <h2 class="section-title">📅 이번 달 정기 작업</h2>
+      <div class="monthly-task-box" id="todoMonthlyTasks"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ==========================================================
+     7. 농사 캘린더 페이지
+     ========================================================== -->
+<section class="page" id="page-calendar">
+  <div class="page-header">
+    <h2>📅 농사 캘린더</h2>
+    <p>월별 정기 작업과 주의해야 할 병해충을 확인하세요</p>
+  </div>
+
+  <div class="container section">
+    <!-- 월 이동 -->
+    <div class="calendar-nav">
+      <button id="prevMonthBtn" aria-label="이전 달">◀</button>
+      <h3 id="calendarTitle"></h3>
+      <button id="nextMonthBtn" aria-label="다음 달">▶</button>
+    </div>
+
+    <!-- 작업 카테고리 색상 범례 -->
+    <div class="calendar-legend" id="calendarLegend"></div>
+
+    <!-- 달력 -->
+    <div class="calendar-grid-wrap">
+      <div class="calendar-grid" id="calendarGrid"></div>
+      <p style="margin-top:12px;font-size:0.82rem;color:var(--text-light);">📌 날짜를 클릭하면 그 날 해야 할 일을 추가하거나 확인할 수 있어요.</p>
+    </div>
+
+    <!-- 이번 달 해야 할 일 -->
+    <h2 class="section-title">🧑‍🌾 이번 달 해야 할 일</h2>
+    <div class="monthly-task-box" id="calendarTasks" style="margin-bottom:26px;"></div>
+
+    <!-- 이번 달 주의 병해충 -->
+    <h2 class="section-title">⚠️ 이번 달 주의 병해충</h2>
+    <div class="pest-warning-list" id="calendarPestWarnings"></div>
+  </div>
+</section>
+</main>
+
+<!-- ==========================================================
+     Footer
+     ========================================================== -->
+<footer>
+  <div class="footer-logo">🌾 제주한끼</div>
+  <p>제주 감귤 농부 지원 플랫폼 - 학생 프로젝트</p>
+  <p>문의 : gimumin542@gmail.com</p>
+  <p>&copy; 2026 제주한끼. All rights reserved.</p>
+</footer>
+
+<!-- ==========================================================
+     모달 : 품종 상세 / 품종 추가 / 병해충 상세
+     ========================================================== -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal" id="modalContent">
+    <!-- JS로 내용 채움 -->
+  </div>
+</div>
+
+<script>
+/* ==========================================================
+   제주 감귤 농부 지원 플랫폼 - 스크립트 (ES6)
+   - 품종 목록 / 캘린더 할 일은 구글 시트(Google Apps Script 웹앱)에
+     저장되어 새로고침은 물론 다른 사람과도 공유된다.
+     (서버 연결 실패 시 localStorage로 자동 대체)
+   - 날씨만 Open-Meteo API로 실시간 조회 (API 키 불필요, CORS 지원)
+   ========================================================== */
+
+'use strict';
+
+/* ==========================================================
+   0. 구글 시트 연동 설정 (Apps Script Web App)
+   - 아래 URL은 Google Apps Script를 "웹 앱"으로 배포했을 때 나오는 주소.
+   - 품종 목록(varieties)과 캘린더 할 일(calendarTasks)을
+     같은 Apps Script 프로젝트의 서로 다른 시트에 저장/조회한다.
+   - GET  {API_URL}?type=varieties      → 품종 목록 JSON 배열 반환
+   - GET  {API_URL}?type=calendarTasks  → 캘린더 할 일 JSON 객체 반환
+   - POST {API_URL} (본문: {type, data}) → 시트 전체 덮어쓰기 저장
+   ========================================================== */
+const API_URL = "https://script.google.com/macros/s/AKfycbyC2DFOYBR3QY-JbG_B8Og5MZ8O-zQ3w-RYUoZ4ZqgLxt9jhnOi8T-pA1ZeFvDhIJHx/exec";
+
+// 구글 시트에서 데이터 읽기 (GET). 실패 시 null 반환 → 호출부에서 localStorage/기본값으로 대체.
+async function fetchFromSheet(type) {
+  try {
+    const res = await fetch(`${API_URL}?type=${type}`);
+    if (!res.ok) throw new Error(`서버 응답 오류: ${res.status}`);
+    return await res.json();
+  } catch (e) {
+    console.warn(`[구글시트 연동] ${type} 불러오기 실패, 로컬 데이터로 대체합니다.`, e);
+    return null;
+  }
+}
+
+// 구글 시트에 데이터 쓰기 (POST).
+// Content-Type을 text/plain으로 보내야 Apps Script 웹앱에서 브라우저의
+// CORS 사전 요청(OPTIONS) 없이 바로 doPost를 받을 수 있다.
+async function saveToSheet(type, data) {
+  try {
+    const res = await fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({ type, data })
+    });
+    if (!res.ok) throw new Error(`서버 응답 오류: ${res.status}`);
+    return true;
+  } catch (e) {
+    console.warn(`[구글시트 연동] ${type} 저장 실패`, e);
+    return false;
+  }
+}
+
+/* ==========================================================
+   1. 상수 및 예시 데이터
+   ========================================================== */
+
+// ----- 지역별 위도/경도 (Open-Meteo 호출용 상수) -----
+const REGIONS = [
+  { id: 'jeju',      name: '제주시',   lat: 33.4996, lon: 126.5312 },
+  { id: 'seogwipo',  name: '서귀포시', lat: 33.2541, lon: 126.5601 },
+  { id: 'seongsan',  name: '성산',     lat: 33.4380, lon: 126.9166 },
+  { id: 'hallim',    name: '한림',     lat: 33.4144, lon: 126.2691 }
+];
+
+// 날씨 갱신 주기 : 30분
+const WEATHER_REFRESH_MS = 30 * 60 * 1000;
+
+// ----- 기본 제공 품종 예시 데이터 -----
+// 최초 접속 시 localStorage가 비어 있으면 이 데이터로 초기화한다.
+const DEFAULT_VARIETIES = [
+  {
+    id: 'v001',
+    name: '노지감귤',
+    category: '감귤류',
+    feature: '제주를 대표하는 노지 재배 감귤. 재배가 쉽고 대중적이다.',
+    taste: '새콤달콤',
+    harvestPeriod: '11월~1월',
+    difficulty: '쉬움',
+    todayPrice: 3200,
+    image: '',
+    emoji: '🍊',
+    fertilizers: [
+      { name: '복합비료(감귤 전용)', timing: '3월', method: '나무 주변에 골고루 살포 후 흙과 섞기' },
+      { name: '유기질 퇴비', timing: '11월', method: '수확 후 나무 밑동 주변에 두껍게 덮기' }
+    ],
+    isCustom: false
+  },
+  {
+    id: 'v002',
+    name: '한라봉',
+    category: '감귤류',
+    feature: '꼭지가 볼록 튀어나온 모양이 한라산을 닮았다. 과즙이 풍부하다.',
+    taste: '새콤달콤',
+    harvestPeriod: '1월~3월',
+    difficulty: '보통',
+    todayPrice: 6500,
+    image: '',
+    emoji: '🍊',
+    fertilizers: [
+      { name: '질소질 비료', timing: '2월', method: '새순이 나기 전 나무 주변에 살포' },
+      { name: '칼리 비료', timing: '9월', method: '열매 비대기에 물에 희석하여 관주' }
+    ],
+    isCustom: false
+  },
+  {
+    id: 'v003',
+    name: '천혜향',
+    category: '감귤류',
+    feature: '향이 천리를 간다는 뜻의 이름처럼 향기가 뛰어나고 당도가 높다.',
+    taste: '달콤함',
+    harvestPeriod: '2월~4월',
+    difficulty: '어려움',
+    todayPrice: 7800,
+    image: '',
+    emoji: '🍊',
+    fertilizers: [
+      { name: '완효성 복합비료', timing: '3월', method: '뿌리 주변 20cm 깊이에 묻어주기' },
+      { name: '미량요소 비료', timing: '6월', method: '엽면(잎)에 희석액을 분무' }
+    ],
+    isCustom: false
+  },
+  {
+    id: 'v004',
+    name: '레드향',
+    category: '감귤류',
+    feature: '껍질이 붉은빛을 띠며 알이 크고 식감이 부드럽다.',
+    taste: '달콤함',
+    harvestPeriod: '12월~2월',
+    difficulty: '보통',
+    todayPrice: 8200,
+    image: '',
+    emoji: '🍊',
+    fertilizers: [
+      { name: '유기질 비료', timing: '3월', method: '나무 주변에 살포 후 가볍게 흙과 섞기' },
+      { name: '인산질 비료', timing: '6월', method: '꽃이 진 후 열매 달림을 돕기 위해 시비' }
+    ],
+    isCustom: false
+  },
+  {
+    id: 'v005',
+    name: '월동무',
+    category: '뿌리채소',
+    feature: '제주의 따뜻한 겨울 기후에서 노지 재배하는 무. 단단하고 시원한 맛이 특징이다.',
+    taste: '아삭함',
+    harvestPeriod: '11월~2월',
+    difficulty: '쉬움',
+    todayPrice: 1200,
+    image: '',
+    emoji: '🥬',
+    fertilizers: [
+      { name: '복합비료', timing: '9월', method: '파종 전 밑거름으로 골고루 살포 후 경운' },
+      { name: '칼리질 비료', timing: '11월', method: '뿌리 비대기에 웃거름으로 시비' }
+    ],
+    isCustom: false
+  },
+  {
+    id: 'v006',
+    name: '제주당근',
+    category: '뿌리채소',
+    feature: '제주 화산회토에서 자라 단맛이 강하고 아삭한 식감을 가진 전국 최대 생산지 작물.',
+    taste: '아삭함',
+    harvestPeriod: '12월~3월',
+    difficulty: '보통',
+    todayPrice: 1800,
+    image: '',
+    emoji: '🥕',
+    fertilizers: [
+      { name: '완효성 복합비료', timing: '9월', method: '파종 전 전면 살포 후 깊이 갈아엎기' },
+      { name: '붕소 비료', timing: '11월', method: '뿌리 갈라짐 예방을 위해 엽면 시비' }
+    ],
+    isCustom: false
+  },
+  {
+    id: 'v007',
+    name: '월동감자(대지마)',
+    category: '뿌리채소',
+    feature: '제주에서 겨울에 심어 이른 봄에 수확하는 감자. 전분이 많고 포슬포슬하다.',
+    taste: '고소함',
+    harvestPeriod: '3월~5월',
+    difficulty: '보통',
+    todayPrice: 2200,
+    image: '',
+    emoji: '🥔',
+    fertilizers: [
+      { name: '유기질 퇴비', timing: '12월', method: '파종 전 밭 전체에 살포 후 깊이갈이' },
+      { name: '복합비료', timing: '2월', method: '싹이 튼 후 골 사이에 웃거름으로 시비' }
+    ],
+    isCustom: false
+  },
+  {
+    id: 'v008',
+    name: '제주마늘(대서종)',
+    category: '양념채소',
+    feature: '알이 굵고 저장성이 뛰어난 난지형 마늘. 매운맛과 향이 진하다.',
+    taste: '알싸함',
+    harvestPeriod: '5월~6월',
+    difficulty: '어려움',
+    todayPrice: 4500,
+    image: '',
+    emoji: '🧄',
+    fertilizers: [
+      { name: '밑거름 복합비료', timing: '9월', method: '파종 전 이랑에 골고루 살포 후 멀칭' },
+      { name: '추비(질소질 비료)', timing: '3월', method: '구 비대기에 골 사이 웃거름으로 시비' }
+    ],
+    isCustom: false
+  },
+  {
+    id: 'v009',
+    name: '월동배추',
+    category: '엽채류',
+    feature: '겨울철 노지에서 재배해 속이 꽉 차고 단맛이 강한 제주 대표 엽채류.',
+    taste: '담백함',
+    harvestPeriod: '12월~2월',
+    difficulty: '쉬움',
+    todayPrice: 900,
+    image: '',
+    emoji: '🥬',
+    fertilizers: [
+      { name: '복합비료', timing: '9월', method: '정식 전 밑거름으로 살포 후 이랑 만들기' },
+      { name: '질소질 비료', timing: '10월', method: '결구 시작 시기에 웃거름으로 시비' }
+    ],
+    isCustom: false
+  },
+  {
+    id: 'v010',
+    name: '브로콜리',
+    category: '엽채류',
+    feature: '제주 서부지역에서 많이 재배되는 겨울 채소. 영양가가 높고 수출 효자 품목이다.',
+    taste: '담백함',
+    harvestPeriod: '11월~2월',
+    difficulty: '보통',
+    todayPrice: 3500,
+    image: '',
+    emoji: '🥦',
+    fertilizers: [
+      { name: '복합비료', timing: '9월', method: '정식 전 밑거름으로 전면 살포' },
+      { name: '붕소 비료', timing: '11월', method: '꽃봉오리 형성기에 엽면 살포로 결구 촉진' }
+    ],
+    isCustom: false
+  },
+  {
+    id: 'v011',
+    name: '청귤',
+    category: '감귤류',
+    feature: '덜 익은 초록색 상태로 수확하는 제주 재래종 감귤. 신맛이 강해 즙이나 청(淸)으로 많이 가공한다.',
+    taste: '새콤함',
+    harvestPeriod: '8월~9월',
+    difficulty: '보통',
+    todayPrice: 4200,
+    image: '',
+    emoji: '🍋',
+    fertilizers: [
+      { name: '유기질 퇴비', timing: '3월', method: '나무 주변에 살포 후 흙과 섞기' },
+      { name: '칼리질 비료', timing: '7월', method: '과실 비대기에 웃거름으로 시비' }
+    ],
+    isCustom: false
+  },
+  {
+    id: 'v012',
+    name: '콜라비',
+    category: '뿌리채소',
+    feature: '순무처럼 생긴 줄기채소로 제주 겨울 밭작물로 재배가 늘고 있다. 아삭하고 단맛이 난다.',
+    taste: '아삭함',
+    harvestPeriod: '12월~2월',
+    difficulty: '쉬움',
+    todayPrice: 1500,
+    image: '',
+    emoji: '🥬',
+    fertilizers: [
+      { name: '복합비료', timing: '10월', method: '파종 전 밑거름으로 골고루 살포' },
+      { name: '붕소 비료', timing: '12월', method: '구근 비대기에 엽면 시비' }
+    ],
+    isCustom: false
+  },
+  {
+    id: 'v013',
+    name: '양배추',
+    category: '엽채류',
+    feature: '제주 서귀포 지역에서 겨울철 대량 재배되는 대표 월동 채소. 결구력이 좋고 저장성이 뛰어나다.',
+    taste: '담백함',
+    harvestPeriod: '12월~3월',
+    difficulty: '쉬움',
+    todayPrice: 800,
+    image: '',
+    emoji: '🥬',
+    fertilizers: [
+      { name: '복합비료', timing: '9월', method: '정식 전 밑거름으로 전면 살포' },
+      { name: '질소질 비료', timing: '11월', method: '결구 시작 시기에 웃거름으로 시비' }
+    ],
+    isCustom: false
+  },
+  {
+    id: 'v014',
+    name: '제주참깨',
+    category: '양념채소',
+    feature: '여름철 밭작물로 재배하는 유지작물. 고소한 향이 강해 기름과 양념으로 널리 쓰인다.',
+    taste: '고소함',
+    harvestPeriod: '8월~9월',
+    difficulty: '보통',
+    todayPrice: 9500,
+    image: '',
+    emoji: '🌾',
+    fertilizers: [
+      { name: '복합비료', timing: '5월', method: '파종 전 이랑에 골고루 살포' },
+      { name: '인산질 비료', timing: '7월', method: '개화기에 웃거름으로 시비' }
+    ],
+    isCustom: false
+  },
+  {
+    id: 'v015',
+    name: '서리태(콩)',
+    category: '두류',
+    feature: '겉은 검고 속은 푸른 서리태 콩. 제주 중산간 밭에서 윤작 작물로 많이 재배한다.',
+    taste: '고소함',
+    harvestPeriod: '10월~11월',
+    difficulty: '쉬움',
+    todayPrice: 8000,
+    image: '',
+    emoji: '🫘',
+    fertilizers: [
+      { name: '퇴비', timing: '5월', method: '파종 전 밭 전체에 살포 후 경운' },
+      { name: '칼리질 비료', timing: '8월', method: '꼬투리 형성기에 웃거름으로 시비' }
+    ],
+    isCustom: false
+  },
+  {
+    id: 'v016',
+    name: '유채',
+    category: '특용작물',
+    feature: '봄철 노란 꽃밭으로 유명하지만 씨앗은 기름 작물로도 재배된다. 녹비(풋거름) 작물로도 활용된다.',
+    taste: '고소함',
+    harvestPeriod: '5월~6월',
+    difficulty: '쉬움',
+    todayPrice: 3000,
+    image: '',
+    emoji: '🌼',
+    fertilizers: [
+      { name: '복합비료', timing: '10월', method: '파종 전 밑거름으로 살포' },
+      { name: '질소질 비료', timing: '3월', method: '봄철 생육기에 웃거름으로 시비' }
+    ],
+    isCustom: false
+  },
+  {
+    id: 'v017',
+    name: '제주참다래(키위)',
+    category: '과일류',
+    feature: '따뜻한 제주 기후 덕분에 노지 재배가 가능한 아열대성 과일. 과육이 부드럽고 새콤달콤하다.',
+    taste: '새콤달콤',
+    harvestPeriod: '10월~11월',
+    difficulty: '어려움',
+    todayPrice: 5500,
+    image: '',
+    emoji: '🥝',
+    fertilizers: [
+      { name: '유기질 퇴비', timing: '2월', method: '수형 정리 후 나무 주변에 넉넉히 시비' },
+      { name: '칼리질 비료', timing: '8월', method: '과실 비대기에 웃거름으로 시비' }
+    ],
+    isCustom: false
+  },
+  {
+    id: 'v018',
+    name: '백향과(패션프루트)',
+    category: '과일류',
+    feature: '제주의 온화한 기후에서 하우스 재배로 늘고 있는 아열대 과일. 향이 진하고 새콤한 맛이 특징이다.',
+    taste: '새콤함',
+    harvestPeriod: '7월~10월',
+    difficulty: '어려움',
+    todayPrice: 12000,
+    image: '',
+    emoji: '🍈',
+    fertilizers: [
+      { name: '복합비료', timing: '4월', method: '덩굴 유인 전 뿌리 주변에 시비' },
+      { name: '칼리질 비료', timing: '7월', method: '개화 및 결실기에 물에 희석하여 관주' }
+    ],
+    isCustom: false
+  },
+  {
+    id: 'v019',
+    name: '표고버섯',
+    category: '버섯류',
+    feature: '제주 곶자왈 지역의 서늘한 그늘을 활용해 원목이나 배지로 재배하는 버섯류. 향과 식감이 좋다.',
+    taste: '담백함',
+    harvestPeriod: '연중(봄·가을 성수기)',
+    difficulty: '보통',
+    todayPrice: 15000,
+    image: '',
+    emoji: '🍄',
+    fertilizers: [
+      { name: '균사 배지 영양제', timing: '접종 시', method: '배지(톱밥) 제조 시 혼합하여 살균' },
+      { name: '수분 관리', timing: '수시', method: '재배사 내 습도 유지를 위한 관수' }
+    ],
+    isCustom: false
+  }
+];
+
+// ----- 품종별 면적당 평균 생산량 / 생산비 데이터 -----
+// yieldPerM2 : ㎡당 평균 생산량(kg), costPerM2 : ㎡당 평균 생산비(원)
+// ※ 기존 varietyData의 todayPrice(시세)를 그대로 활용하므로 이 데이터에는 시세를 포함하지 않는다.
+// ----- 작물 종류(카테고리)별 기본 이모지 -----
+// 사용자가 새 작물을 등록할 때 선택한 카테고리에 맞춰 자동으로 이모지를 부여한다.
+const CATEGORY_EMOJI = {
+  '감귤류': '🍊',
+  '뿌리채소': '🥕',
+  '엽채류': '🥦',
+  '양념채소': '🧄',
+  '두류': '🫘',
+  '특용작물': '🌿',
+  '과일류': '🥝',
+  '버섯류': '🍄'
+};
+
+const CROP_FARM_DATA = {
+  v001: { yieldPerM2: 2.8, costPerM2: 1200 },  // 노지감귤
+  v002: { yieldPerM2: 2.2, costPerM2: 1800 },  // 한라봉
+  v003: { yieldPerM2: 2.0, costPerM2: 2000 },  // 천혜향
+  v004: { yieldPerM2: 2.4, costPerM2: 1900 },  // 레드향
+  v005: { yieldPerM2: 6.5, costPerM2: 700 },   // 월동무
+  v006: { yieldPerM2: 4.0, costPerM2: 900 },   // 제주당근
+  v007: { yieldPerM2: 3.0, costPerM2: 1100 },  // 월동감자
+  v008: { yieldPerM2: 1.2, costPerM2: 2500 },  // 제주마늘
+  v009: { yieldPerM2: 5.5, costPerM2: 650 },   // 월동배추
+  v010: { yieldPerM2: 2.0, costPerM2: 1500 },  // 브로콜리
+  v011: { yieldPerM2: 2.5, costPerM2: 1300 },  // 청귤
+  v012: { yieldPerM2: 5.0, costPerM2: 800 },   // 콜라비
+  v013: { yieldPerM2: 6.0, costPerM2: 700 },   // 양배추
+  v014: { yieldPerM2: 0.3, costPerM2: 1600 },  // 제주참깨
+  v015: { yieldPerM2: 0.4, costPerM2: 900 },   // 서리태(콩)
+  v016: { yieldPerM2: 0.5, costPerM2: 600 },   // 유채
+  v017: { yieldPerM2: 3.5, costPerM2: 2200 },  // 제주참다래
+  v018: { yieldPerM2: 1.5, costPerM2: 3000 },  // 백향과
+  v019: { yieldPerM2: 4.0, costPerM2: 3500 }   // 표고버섯
+};
+
+// 1평 = 3.305785㎡
+const M2_PER_PYEONG = 3.305785;
+
+// ----- 병해충 예시 데이터 -----
+// cautionMonths : 주의 시기(월) 배열 → 농사 캘린더와 연동
+const PESTS = [
+  {
+    id: 'p001',
+    name: '귤응애',
+    emoji: '🕷️',
+    symptom: '잎이 회백색으로 변하고 광택을 잃으며, 심하면 잎이 떨어진다.',
+    solution: '발생 초기에 응애 전용 약제를 잎 뒷면까지 골고루 살포한다.',
+    prevention: '천적(이리응애)을 보호하고, 같은 계통 약제의 연속 사용을 피한다.',
+    cautionMonths: [5, 6, 7, 8, 9],
+    pesticides: [
+      {
+        name: '아바멕틴 유제',
+        timing: '발생 초기',
+        usage: '2,000배 희석하여 잎 뒷면 중심으로 살포',
+        caution: '수확 14일 전까지 사용, 연 2회 이내 사용 권장'
+      },
+      {
+        name: '스피로디클로펜 수화제',
+        timing: '알·약충 발생기',
+        usage: '2,000배 희석하여 나무 전체에 고르게 살포',
+        caution: '꿀벌에 독성이 있으므로 개화기 사용 금지'
+      }
+    ]
+  },
+  {
+    id: 'p002',
+    name: '검은점무늬병',
+    emoji: '🍂',
+    symptom: '열매와 잎에 검은 점무늬가 생기고 상품성이 크게 떨어진다.',
+    solution: '병에 걸린 가지(죽은 가지)를 제거하고 보호성 살균제를 살포한다.',
+    prevention: '전정 후 죽은 가지를 과원 밖으로 치우고, 장마 전 예방 살포를 한다.',
+    cautionMonths: [6, 7, 8],
+    pesticides: [
+      {
+        name: '만코제브 수화제',
+        timing: '6월 상순 ~ 장마기 (강우 전후)',
+        usage: '500배 희석하여 10일 간격으로 살포',
+        caution: '수확 30일 전까지 사용, 비 오기 전 살포가 효과적'
+      },
+      {
+        name: '프로피네브 수화제',
+        timing: '열매 비대기 초반',
+        usage: '600배 희석하여 열매와 잎에 골고루 살포',
+        caution: '고온기 한낮 살포 시 약해 주의'
+      }
+    ]
+  },
+  {
+    id: 'p003',
+    name: '궤양병',
+    emoji: '🦠',
+    symptom: '잎·가지·열매에 코르크처럼 솟아오른 갈색 반점이 생긴다.',
+    solution: '감염 부위를 제거해 소각하고 구리(동)제를 살포한다.',
+    prevention: '태풍·강풍 후 반드시 방제하고, 상처가 나지 않게 관리한다.',
+    cautionMonths: [5, 6, 7, 9],
+    pesticides: [
+      {
+        name: '쿠퍼(동) 수화제',
+        timing: '발아기, 태풍 전후',
+        usage: '500배 희석하여 나무 전체에 살포',
+        caution: '고온기에는 약해 우려가 있으니 농도를 지킬 것'
+      },
+      {
+        name: '옥솔린산 수화제',
+        timing: '발생 초기',
+        usage: '1,000배 희석하여 7일 간격 2~3회 살포',
+        caution: '수확 21일 전까지 사용'
+      }
+    ]
+  },
+  {
+    id: 'p004',
+    name: '진딧물',
+    emoji: '🐜',
+    symptom: '새순에 떼로 붙어 즙을 빨아 잎이 오그라들고, 그을음병을 유발한다.',
+    solution: '발생 초기에 진딧물 전용 약제를 새순 중심으로 살포한다.',
+    prevention: '무당벌레 등 천적을 보호하고 새순 시기에 예찰을 강화한다.',
+    cautionMonths: [4, 5, 6],
+    pesticides: [
+      {
+        name: '이미다클로프리드 수화제',
+        timing: '새순 발생기 (발생 초기)',
+        usage: '2,000배 희석하여 새순 중심으로 살포',
+        caution: '꿀벌 독성 강함 - 개화기 사용 금지, 수확 14일 전까지'
+      },
+      {
+        name: '설폭사플로르 입상수화제',
+        timing: '발생 초기',
+        usage: '2,000배 희석하여 잎 뒷면까지 살포',
+        caution: '연속 사용을 피하고 계통이 다른 약제와 교대로 사용'
+      }
+    ]
+  },
+  {
+    id: 'p005',
+    name: '무름병',
+    emoji: '🥬',
+    symptom: '배추·무 등의 조직이 물러지고 심한 악취가 나며 빠르게 썩는다.',
+    solution: '병든 포기는 즉시 뽑아 제거하고 배수로를 정비해 습해를 막는다.',
+    prevention: '연작을 피하고 배수가 잘되는 밭에 재배하며, 상처를 내지 않도록 관리한다.',
+    cautionMonths: [9, 10, 11],
+    pesticides: [
+      {
+        name: '옥솔린산 수화제',
+        timing: '발병 초기',
+        usage: '1,000배 희석하여 포기 밑동 중심으로 관주',
+        caution: '수확 7일 전까지 사용, 과습 시 재발 우려'
+      },
+      {
+        name: '스트렙토마이신 수화제',
+        timing: '정식 직후 예방',
+        usage: '2,000배 희석하여 뿌리 주변에 관주',
+        caution: '연속 사용을 피하고 다른 계통과 교대 사용'
+      }
+    ]
+  },
+  {
+    id: 'p006',
+    name: '노균병',
+    emoji: '🍃',
+    symptom: '잎 뒷면에 회백색 곰팡이가 피고 앞면은 누렇게 변하며 말라간다.',
+    solution: '병든 잎을 조기에 제거하고 통풍이 잘되도록 재식 간격을 넓힌다.',
+    prevention: '저온다습한 환경을 피하고 예방적으로 보호성 살균제를 살포한다.',
+    cautionMonths: [10, 11, 12, 1, 2],
+    pesticides: [
+      {
+        name: '마이클로부타닐 수화제',
+        timing: '발생 초기',
+        usage: '2,000배 희석하여 잎 뒷면까지 골고루 살포',
+        caution: '수확 14일 전까지 사용, 저온기 살포 효과적'
+      },
+      {
+        name: '메탈락실 수화제',
+        timing: '예방 목적',
+        usage: '1,000배 희석하여 10일 간격 살포',
+        caution: '동일 계통 연속 사용을 피할 것'
+      }
+    ]
+  },
+  {
+    id: 'p007',
+    name: '굴파리',
+    emoji: '🪰',
+    symptom: '당근·마늘 등 잎과 줄기 속을 갉아먹어 하얀 굴 자국이 생긴다.',
+    solution: '피해 잎을 제거하고 발생 초기에 침투성 약제를 살포한다.',
+    prevention: '한랭사 등 방충망을 설치하고 인근 잡초를 미리 제거한다.',
+    cautionMonths: [4, 5, 9, 10],
+    pesticides: [
+      {
+        name: '스피노사드 액상수화제',
+        timing: '발생 초기',
+        usage: '2,000배 희석하여 잎 전체에 골고루 살포',
+        caution: '수확 7일 전까지 사용, 천적 보호를 위해 과다 살포 자제'
+      }
+    ]
+  }
+];
+
+// ----- 월별 농사 일정 예시 데이터 (1월 ~ 12월) -----
+const MONTHLY_TASKS = {
+  1:  ['전정(가지치기) 준비', '방한 및 동해 예방 점검', '토양 배수로 정비', '월동무·월동배추 수확'],
+  2:  ['가지치기(전정) 실시', '전정 가지 정리 및 소각', '농기구 점검', '제주당근 수확 마무리'],
+  3:  ['봄비료(밑거름) 살포', '접목 작업', '관수 시설 점검', '월동감자 파종·순치기'],
+  4:  ['꽃봉오리 관리', '진딧물 예찰 시작', '잡초 제거', '마늘 웃거름 및 굴파리 예찰'],
+  5:  ['꽃 솎기(적화)', '병해충 방제 시작', '관수 관리', '제주마늘 수확 준비'],
+  6:  ['열매 솎기(적과) 1차', '검은점무늬병 예방 살포', '장마 대비 배수로 점검', '마늘 수확 및 건조'],
+  7:  ['여름 전정', '귤응애 집중 방제', '태풍 대비 가지 고정', '가을 채소 육묘 준비'],
+  8:  ['열매 솎기(적과) 2차', '고온기 관수 관리', '태풍 대비 점검', '월동배추·브로콜리 정식'],
+  9:  ['가을비료(추비) 살포', '품질 향상 관리(타이벡 등)', '궤양병 방제', '당근·무 파종'],
+  10: ['수확 준비(선과장 정비)', '착색 관리', '수확용 자재 준비', '노균병 예방 방제(밭작물)'],
+  11: ['노지감귤 수확 시작', '유기질 퇴비 준비', '저장고 점검', '브로콜리·월동무 수확 시작'],
+  12: ['수확 마무리', '저장 관리', '한 해 농사 결산 및 계획', '월동배추·당근 수확']
+};
+
+// ----- 날씨 조건별 할 일 규칙 -----
+// check(w) 함수가 true를 반환하면 해당 할 일을 표시한다.
+const WEATHER_TODO_RULES = [
+  {
+    emoji: '🚫',
+    text: '강수 확률이 높습니다. 병해충 방제 작업을 미루세요.',
+    check: (w) => w.rainProb >= 60
+  },
+  {
+    emoji: '🌬️',
+    text: '바람이 강합니다. 가지 고정 상태를 확인하세요.',
+    check: (w) => w.windSpeed >= 9
+  },
+  {
+    emoji: '🥶',
+    text: '기온이 낮습니다. 동해(냉해) 피해 예방 조치를 하세요.',
+    check: (w) => w.temp <= 5
+  },
+  {
+    emoji: '🥵',
+    text: '기온이 높습니다. 한낮 작업을 피하고 오전/오후로 나누어 작업하세요.',
+    check: (w) => w.temp >= 30
+  },
+  {
+    emoji: '💧',
+    text: '맑고 건조합니다. 관수(물주기) 작업을 하기 좋은 날입니다.',
+    check: (w) => w.rainProb < 30 && w.weatherCode <= 3
+  },
+  {
+    emoji: '🧴',
+    text: '비 예보가 없어 병해충 방제 작업에 알맞은 날입니다.',
+    check: (w) => w.rainProb < 30 && w.windSpeed < 9
+  }
+];
+
+// ----- 날씨 API 실패 시 사용할 예시(더미) 날씨 데이터 -----
+const FALLBACK_WEATHER = {
+  jeju:     { temp: 26, rainProb: 10, windSpeed: 3, weatherCode: 0 },
+  seogwipo: { temp: 27, rainProb: 20, windSpeed: 4, weatherCode: 2 },
+  seongsan: { temp: 24, rainProb: 60, windSpeed: 6, weatherCode: 61 },
+  hallim:   { temp: 25, rainProb: 5,  windSpeed: 3, weatherCode: 0 }
+};
+
+/* ==========================================================
+   2. 전역 상태
+   ========================================================== */
+
+const STORAGE_KEY = 'jejuVarietyData';   // localStorage 저장 키
+
+let varietyData = [];        // 품종 목록 (localStorage와 동기화)
+let priceHistoryMap = {};    // { 품종id: [{date, price}, ...] } 시세 이력 (메모리 생성)
+let weatherData = {};        // { 지역id: {temp, rainProb, windSpeed, weatherCode, isFallback} }
+let selectedRegion = 'jeju'; // 오늘의 할일 페이지에서 선택된 지역
+let priceSortKey = 'name';   // 시세 페이지 정렬 기준
+let chartPeriod = 7;         // 시세 그래프 기간 (7 / 30 / 'all')
+let calendarYear, calendarMonth; // 캘린더 페이지가 보여주는 연/월
+let openDayInfo = null;          // 현재 모달로 열려 있는 날짜 { y, m, d }
+
+/* ----- 캘린더 개인 할 일(일별 To-do) 관리 -----
+   - 날짜(YYYY-MM-DD)를 key로, 할 일 배열을 value로 저장
+   - 작업 종류(카테고리)마다 고유 색상을 지정해서
+     달력 칸 + 범례에서 한눈에 어떤 작업이 있는지 구분한다. */
+const CALENDAR_TASK_KEY = 'jejuCalendarTasks';
+let calendarTasksData = {}; // { '2026-07-24': [{ id, title, category, memo }] }
+
+const TASK_CATEGORIES = [
+  { id: 'fertilize', label: '비료/시비', color: '#4CAF50' },
+  { id: 'pest',      label: '병해충 방제', color: '#E53935' },
+  { id: 'prune',     label: '전정/가지치기', color: '#1E88E5' },
+  { id: 'water',     label: '관수', color: '#26A69A' },
+  { id: 'harvest',   label: '수확', color: '#FF8A00' },
+  { id: 'etc',       label: '기타', color: '#9E9E9E' }
+];
+
+function taskCategory(id) {
+  return TASK_CATEGORIES.find((c) => c.id === id) || TASK_CATEGORIES[TASK_CATEGORIES.length - 1];
+}
+
+// YYYY-MM-DD 형태의 날짜 key 생성
+function dateKey(y, m, d) {
+  return `${y}-${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+}
+
+// 캘린더 할 일 불러오기
+// 1순위: 구글 시트(Apps Script) → 2순위: localStorage 캐시
+async function loadCalendarTasks() {
+  const remote = await fetchFromSheet('calendarTasks');
+  if (remote && typeof remote === 'object' && !Array.isArray(remote)) {
+    calendarTasksData = remote;
+    cacheCalendarTasksLocally();
+    return;
+  }
+
+  try {
+    const saved = localStorage.getItem(CALENDAR_TASK_KEY);
+    calendarTasksData = saved ? JSON.parse(saved) : {};
+  } catch (e) {
+    console.warn('캘린더 할 일 불러오기 실패', e);
+    calendarTasksData = {};
+  }
+}
+
+// 현재 개인 할 일을 구글 시트에 저장 (+ localStorage에도 캐시)
+async function saveCalendarTasks() {
+  cacheCalendarTasksLocally();
+  await saveToSheet('calendarTasks', calendarTasksData);
+}
+
+// 오프라인/서버 오류 대비용 localStorage 캐시 저장
+function cacheCalendarTasksLocally() {
+  try {
+    localStorage.setItem(CALENDAR_TASK_KEY, JSON.stringify(calendarTasksData));
+  } catch (e) {
+    console.warn('캘린더 할 일 저장 실패', e);
+  }
+}
+const priceUpdatedAt = formatTime(new Date()); // 시세 갱신 시각(페이지 로드 시각)
+
+/* ==========================================================
+   3. 유틸리티 함수
+   ========================================================== */
+
+// HTML 특수문자 이스케이프 (사용자 입력을 안전하게 출력하기 위함)
+function escapeHtml(str) {
+  return String(str ?? '')
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+
+// 숫자를 3자리 콤마 문자열로 (예: 3200 → "3,200")
+function formatPrice(num) {
+  return Number(num).toLocaleString('ko-KR');
+}
+
+// 시각을 "HH:MM" 형태로
+function formatTime(date) {
+  const h = String(date.getHours()).padStart(2, '0');
+  const m = String(date.getMinutes()).padStart(2, '0');
+  return `${h}:${m}`;
+}
+
+// 날짜를 "YYYY-MM-DD" 형태로
+function formatDate(date) {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, '0');
+  const d = String(date.getDate()).padStart(2, '0');
+  return `${y}-${m}-${d}`;
+}
+
+// 문자열로부터 고정된 숫자 시드를 만든다 (품종별 시세를 항상 같게 생성하기 위함)
+function hashString(str) {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    hash = (hash * 31 + str.charCodeAt(i)) | 0;
+  }
+  return Math.abs(hash) || 1;
+}
+
+// 시드 기반 의사 난수 생성기 (0 ~ 1)
+function seededRandom(seed) {
+  let s = seed;
+  return function () {
+    s = (s * 9301 + 49297) % 233280;
+    return s / 233280;
+  };
+}
+
+// "11월~1월" 같은 출하시기 문자열에서 시작/끝 월을 추출
+function parseHarvestMonths(periodStr) {
+  const nums = String(periodStr).match(/\d+/g);
+  if (!nums || nums.length === 0) return null;
+  const start = parseInt(nums[0], 10);
+  const end = nums.length > 1 ? parseInt(nums[1], 10) : start;
+  return { start, end };
+}
+
+// 특정 월이 출하시기 범위에 포함되는지 확인 (11월~1월처럼 해를 넘는 범위도 처리)
+function isMonthInHarvest(month, periodStr) {
+  const range = parseHarvestMonths(periodStr);
+  if (!range) return false;
+  if (range.start <= range.end) {
+    return month >= range.start && month <= range.end;
+  }
+  // 예: 11월~1월 → 11, 12, 1월 포함
+  return month >= range.start || month <= range.end;
+}
+
+// Open-Meteo 날씨 코드 → 아이콘/설명 변환
+function weatherCodeToInfo(code) {
+  if (code === 0) return { icon: '☀️', label: '맑음' };
+  if (code >= 1 && code <= 2) return { icon: '⛅', label: '구름 조금' };
+  if (code === 3) return { icon: '☁️', label: '흐림' };
+  if (code >= 45 && code <= 48) return { icon: '🌫️', label: '안개' };
+  if (code >= 51 && code <= 67) return { icon: '🌧️', label: '비' };
+  if (code >= 71 && code <= 77) return { icon: '❄️', label: '눈' };
+  if (code >= 80 && code <= 82) return { icon: '🌦️', label: '소나기' };
+  if (code >= 95) return { icon: '⛈️', label: '뇌우' };
+  return { icon: '🌤️', label: '보통' };
+}
+
+// 등락률 표시용 HTML 생성 (상승 = 붉은색/▲, 하락 = 파란색/▼)
+function changeHtml(percent) {
+  if (percent === null || percent === undefined || isNaN(percent)) {
+    return '<span class="change-flat">-</span>';
+  }
+  const p = Number(percent);
+  if (p > 0) return `<span class="change-up">▲ ${p.toFixed(1)}%</span>`;
+  if (p < 0) return `<span class="change-down">▼ ${Math.abs(p).toFixed(1)}%</span>`;
+  return '<span class="change-flat">-</span>';
+}
+
+/* ==========================================================
+   4. 품종 데이터 관리 (구글 시트 연동)
+   ========================================================== */
+
+// 품종 목록 불러오기
+// 1순위: 구글 시트(Apps Script) → 2순위: localStorage 캐시 → 3순위: 기본 예시 데이터
+async function loadVarieties() {
+  const remote = await fetchFromSheet('varieties');
+  if (remote && Array.isArray(remote) && remote.length > 0) {
+    varietyData = remote;
+    cacheVarietiesLocally();
+    return;
+  }
+
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) {
+      varietyData = JSON.parse(saved);
+      return;
+    }
+  } catch (e) {
+    console.warn('localStorage 읽기 실패, 기본 데이터를 사용합니다.', e);
+  }
+
+  // 최초 접속: 기본 예시 품종으로 초기화 (깊은 복사)
+  varietyData = JSON.parse(JSON.stringify(DEFAULT_VARIETIES));
+  await saveVarieties();
+}
+
+// 현재 품종 목록을 구글 시트에 저장 (+ localStorage에도 캐시)
+async function saveVarieties() {
+  cacheVarietiesLocally();
+  await saveToSheet('varieties', varietyData);
+}
+
+// 오프라인/서버 오류 대비용 localStorage 캐시 저장
+function cacheVarietiesLocally() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(varietyData));
+  } catch (e) {
+    console.warn('localStorage 저장 실패', e);
+  }
+}
+
+// id로 품종 찾기
+function findVariety(id) {
+  return varietyData.find((v) => v.id === id);
+}
+
+/* ==========================================================
+   5. 시세 이력 데이터 생성
+   - 실제 API 없이, 품종별 오늘 시세를 기준으로
+     최근 90일치 예시 시세를 시드 난수로 생성한다.
+   - 시드를 품종 id에서 만들기 때문에 새로고침해도 값이 같다.
+   - 데이터 구조: priceHistoryMap[id] = [{date:"YYYY-MM-DD", price:숫자}, ...]
+     (추후 실제 시세 API 연동 시 이 구조 그대로 교체 가능)
+   ========================================================== */
+function buildPriceHistory() {
+  priceHistoryMap = {};
+  const DAYS = 90;
+  const today = new Date();
+
+  varietyData.forEach((v) => {
+    if (!v.todayPrice) return; // 시세가 없는 품종은 이력도 없음
+
+    const rand = seededRandom(hashString(v.id + v.name));
+    const prices = new Array(DAYS);
+    prices[DAYS - 1] = Number(v.todayPrice);
+
+    // 오늘 가격에서 거꾸로 하루씩 ±3% 내외로 변동시키며 과거 가격 생성
+    for (let i = DAYS - 2; i >= 0; i--) {
+      const changeRate = (rand() - 0.5) * 0.06; // -3% ~ +3%
+      let prev = prices[i + 1] / (1 + changeRate);
+      prev = Math.max(Math.round(prev / 10) * 10, 100); // 10원 단위, 최소 100원
+      prices[i] = prev;
+    }
+
+    // 날짜를 붙여 이력 배열 완성
+    const history = [];
+    for (let i = 0; i < DAYS; i++) {
+      const d = new Date(today);
+      d.setDate(today.getDate() - (DAYS - 1 - i));
+      history.push({ date: formatDate(d), price: prices[i] });
+    }
+    priceHistoryMap[v.id] = history;
+  });
+}
+
+// 품종의 전일 대비 등락률(%) 계산
+function getChangePercent(variety) {
+  const history = priceHistoryMap[variety.id];
+  if (!history || history.length < 2) return null;
+  const today = history[history.length - 1].price;
+  const yesterday = history[history.length - 2].price;
+  if (!yesterday) return null;
+  return ((today - yesterday) / yesterday) * 100;
+}
+
+/* ==========================================================
+   6. 날씨 (Open-Meteo API)
+   ========================================================== */
+
+// 한 지역의 날씨를 Open-Meteo에서 가져온다
+async function fetchRegionWeather(region) {
+  const url = 'https://api.open-meteo.com/v1/forecast'
+    + `?latitude=${region.lat}&longitude=${region.lon}`
+    + '&current=temperature_2m,weather_code,wind_speed_10m'
+    + '&wind_speed_unit=ms'
+    + '&hourly=precipitation_probability'
+    + '&forecast_days=1&timezone=Asia%2FSeoul';
+
+  const res = await fetch(url);
+  if (!res.ok) throw new Error('날씨 API 응답 오류: ' + res.status);
+  const data = await res.json();
+
+  // 현재 시각과 가장 가까운 시간대의 강수 확률을 찾는다
+  let rainProb = 0;
+  if (data.hourly && data.hourly.precipitation_probability) {
+    const hourIndex = Math.min(new Date().getHours(), data.hourly.precipitation_probability.length - 1);
+    rainProb = data.hourly.precipitation_probability[hourIndex] ?? 0;
+  }
+
+  return {
+    temp: Math.round(data.current.temperature_2m),
+    windSpeed: Math.round(data.current.wind_speed_10m * 10) / 10, // km/h → 표시용
+    weatherCode: data.current.weather_code,
+    rainProb: rainProb,
+    isFallback: false
+  };
+}
+
+// 모든 지역의 날씨를 가져와 화면을 갱신한다
+async function loadAllWeather() {
+  const results = await Promise.allSettled(REGIONS.map((r) => fetchRegionWeather(r)));
+  let anyFailed = false;
+
+  results.forEach((result, i) => {
+    const regionId = REGIONS[i].id;
+    if (result.status === 'fulfilled') {
+      weatherData[regionId] = result.value;
+    } else {
+      // 실패 시 예시(더미) 데이터로 대체
+      anyFailed = true;
+      weatherData[regionId] = { ...FALLBACK_WEATHER[regionId], isFallback: true };
+      console.warn(`${REGIONS[i].name} 날씨 로드 실패:`, result.reason);
+    }
+  });
+
+  renderWeatherBanner(anyFailed);
+  renderTodayTip();
+  renderTodoPage();
+}
+
+// 지역별 날씨 배너 렌더링
+function renderWeatherBanner(hasError) {
+  const wrap = document.getElementById('weatherCards');
+  const notice = document.getElementById('weatherNotice');
+
+  wrap.innerHTML = REGIONS.map((region) => {
+    const w = weatherData[region.id];
+    if (!w) {
+      return `
+        <div class="weather-card">
+          <span class="w-icon">⏳</span>
+          <div>
+            <div class="w-region">${region.name}</div>
+            <div class="w-info">불러오는 중...</div>
+          </div>
+        </div>`;
+    }
+    const info = weatherCodeToInfo(w.weatherCode);
+    return `
+      <div class="weather-card">
+        <span class="w-icon">${info.icon}</span>
+        <div>
+          <div class="w-region">${region.name}</div>
+          <div class="w-info">
+            <span class="w-temp">${w.temp}℃</span> · 강수 ${w.rainProb}%
+          </div>
+        </div>
+      </div>`;
+  }).join('');
+
+  // 안내 문구 : 오류 안내 또는 농사 관련 조언
+  if (hasError) {
+    notice.innerHTML = '<span class="weather-error">⚠ 일부 지역의 날씨 정보를 불러올 수 없어 예시 데이터로 표시합니다.</span>';
+    return;
+  }
+  notice.textContent = buildWeatherAdvice();
+}
+
+// 날씨 상태에 따라 배너에 표시할 감귤 농사 안내 문구 생성
+function buildWeatherAdvice() {
+  const list = Object.values(weatherData);
+  if (list.length === 0) return '';
+  const maxWind = Math.max(...list.map((w) => w.windSpeed));
+  const maxRain = Math.max(...list.map((w) => w.rainProb));
+  const minTemp = Math.min(...list.map((w) => w.temp));
+  const maxTemp = Math.max(...list.map((w) => w.temp));
+
+  if (maxWind >= 9) return '🌬️ 강풍이 예상됩니다. 가지 고정을 확인하세요!';
+  if (maxRain >= 60) return '🌧️ 강수 확률이 높습니다. 병해충 방제 작업을 미루세요.';
+  if (minTemp <= 5) return '🥶 기온이 낮습니다. 동해(냉해) 예방 조치를 하세요.';
+  if (maxTemp >= 30) return '🥵 무더운 날씨입니다. 한낮 작업을 피하세요.';
+  return '☀️ 농사일 하기 좋은 날씨입니다. 오늘도 힘내세요!';
+}
+
+/* ==========================================================
+   7. 메인 페이지 렌더링
+   ========================================================== */
+
+// 오늘의 농사 팁 (날씨 기반)
+function renderTodayTip() {
+  const tipEl = document.getElementById('todayTip');
+  const w = weatherData[selectedRegion] || weatherData['jeju'];
+  if (!w) return;
+
+  const advice = buildWeatherAdvice();
+  const info = weatherCodeToInfo(w.weatherCode);
+  tipEl.innerHTML = `
+    <span class="tip-icon">${info.icon}</span>
+    <div>
+      <strong>${advice}</strong><br>
+      <span style="font-size:0.85rem; color:var(--text-light);">
+        현재 제주시 기준 ${w.temp}℃ · 강수 확률 ${w.rainProb}% · 풍속 ${w.windSpeed}m/s
+      </span>
+    </div>`;
+}
+
+// 메인 - 오늘의 시세 카드
+function renderHomePriceCards() {
+  const wrap = document.getElementById('homePriceCards');
+  if (varietyData.length === 0) {
+    wrap.innerHTML = '<p class="empty-message">등록된 작물이 없습니다.</p>';
+    return;
+  }
+  wrap.innerHTML = varietyData.map((v) => {
+    const priceText = v.todayPrice
+      ? `${formatPrice(v.todayPrice)}<span class="p-unit">원/kg</span>`
+      : '<span class="no-price" style="font-size:0.9rem;color:var(--text-light);">시세 정보 없음</span>';
+    return `
+      <div class="card price-summary-card" onclick="goToPriceDetail('${v.id}')">
+        <div class="p-name">${v.emoji || '🍊'} ${escapeHtml(v.name)}</div>
+        <div class="p-price">${priceText}</div>
+        <div>${changeHtml(getChangePercent(v))}</div>
+      </div>`;
+  }).join('');
+}
+
+// 메인 - 품종 바로가기 카드
+function renderHomeVarietyCards() {
+  const wrap = document.getElementById('homeVarietyCards');
+  if (varietyData.length === 0) {
+    wrap.innerHTML = '<p class="empty-message">등록된 작물이 없습니다. 작물 페이지에서 추가해 보세요!</p>';
+    return;
+  }
+  wrap.innerHTML = varietyData.map((v) => `
+    <div class="card shortcut-card" onclick="goToVarietyDetail('${v.id}')">
+      <span class="s-emoji">${v.image ? '🖼️' : (v.emoji || '🍊')}</span>
+      <div class="s-name">${escapeHtml(v.name)}
+        ${v.isCustom ? '<span class="badge badge-custom">직접 등록</span>' : ''}
+      </div>
+      <div class="s-desc">${escapeHtml(v.harvestPeriod || '')} · ${escapeHtml(v.taste || '')}</div>
+    </div>`).join('');
+}
+
+// 메인 - 병해충 바로가기 카드
+function renderHomePestCards() {
+  const wrap = document.getElementById('homePestCards');
+  wrap.innerHTML = PESTS.map((p) => `
+    <div class="card shortcut-card" onclick="goToPestDetail('${p.id}')">
+      <span class="s-emoji">${p.emoji}</span>
+      <div class="s-name">${escapeHtml(p.name)}</div>
+      <div class="s-desc">주의 시기 : ${p.cautionMonths[0]}~${p.cautionMonths[p.cautionMonths.length - 1]}월</div>
+    </div>`).join('');
+}
+
+// 메인 - 월별 농사 일정 (현재 달 강조)
+function renderHomeMonthStrip() {
+  const wrap = document.getElementById('homeMonthStrip');
+  const currentMonth = new Date().getMonth() + 1;
+  let html = '';
+  for (let m = 1; m <= 12; m++) {
+    const firstTask = MONTHLY_TASKS[m][0];
+    html += `
+      <div class="month-cell ${m === currentMonth ? 'current' : ''}" onclick="goToCalendarMonth(${m})">
+        <div class="m-num">${m}월</div>
+        <div class="m-task">${escapeHtml(firstTask)}</div>
+      </div>`;
+  }
+  wrap.innerHTML = html;
+}
+
+/* ==========================================================
+   8. 품종 페이지 렌더링 (검색 / 필터 / 목록)
+   ========================================================== */
+function renderVarietyList() {
+  const wrap = document.getElementById('varietyList');
+  const keyword = document.getElementById('varietySearch').value.trim().toLowerCase();
+  const fCategory = document.getElementById('filterCategory').value;
+  const fHarvest = document.getElementById('filterHarvest').value;
+  const fTaste = document.getElementById('filterTaste').value;
+  const fDifficulty = document.getElementById('filterDifficulty').value;
+  const fPrice = document.getElementById('filterPrice').value;
+
+  // 검색어 + 필터 조건으로 목록 걸러내기
+  const filtered = varietyData.filter((v) => {
+    // 검색 (이름 / 특징 / 맛)
+    if (keyword) {
+      const text = `${v.name} ${v.feature} ${v.taste}`.toLowerCase();
+      if (!text.includes(keyword)) return false;
+    }
+    // 작물 종류 필터
+    if (fCategory && (v.category || '감귤류') !== fCategory) return false;
+    // 출하시기 필터
+    if (fHarvest && !isMonthInHarvest(parseInt(fHarvest, 10), v.harvestPeriod)) return false;
+    // 맛 필터
+    if (fTaste && v.taste !== fTaste) return false;
+    // 난이도 필터
+    if (fDifficulty && v.difficulty !== fDifficulty) return false;
+    // 시세 범위 필터
+    if (fPrice) {
+      const price = v.todayPrice;
+      if (!price) return false;
+      if (fPrice === 'low' && price >= 5000) return false;
+      if (fPrice === 'mid' && (price < 5000 || price > 7000)) return false;
+      if (fPrice === 'high' && price <= 7000) return false;
+    }
+    return true;
+  });
+
+  if (filtered.length === 0) {
+    wrap.innerHTML = '<p class="empty-message">조건에 맞는 작물이 없습니다. 🌾<br>검색어나 필터를 바꾸거나 새 작물을 추가해 보세요.</p>';
+    return;
+  }
+
+  wrap.innerHTML = filtered.map((v) => {
+    const imgHtml = v.image
+      ? `<img src="${escapeHtml(v.image)}" alt="${escapeHtml(v.name)}" onerror="this.outerHTML='${v.emoji || '🍊'}'">`
+      : (v.emoji || '🍊');
+    const priceHtml = v.todayPrice
+      ? `${formatPrice(v.todayPrice)}원/kg ${changeHtml(getChangePercent(v))}`
+      : '<span class="no-price">시세 정보 없음</span>';
+    return `
+      <div class="card variety-card" onclick="openVarietyDetail('${v.id}')">
+        <button class="delete-btn" title="작물 삭제"
+          onclick="event.stopPropagation(); deleteVariety('${v.id}')">✕</button>
+        <div class="v-img">${imgHtml}</div>
+        <div class="v-body">
+          <div class="v-name">${escapeHtml(v.name)}
+            ${v.isCustom ? '<span class="badge badge-custom">직접 등록</span>' : ''}
+          </div>
+          <div class="v-feature">${escapeHtml(v.feature || '')}</div>
+          <div class="v-meta">
+            <span class="badge badge-orange">${escapeHtml(v.taste || '-')}</span>
+            <span class="badge">${escapeHtml(v.harvestPeriod || '-')}</span>
+            <span class="badge">${escapeHtml(v.difficulty || '-')}</span>
+          </div>
+          <div class="v-price">${priceHtml}</div>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+/* ==========================================================
+   9. 품종 추가 / 삭제
+   ========================================================== */
+
+// "+ 새 품종 추가" 모달 열기
+function openAddVarietyModal() {
+  const modal = document.getElementById('modalContent');
+  modal.innerHTML = `
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <h3>🌾 새 작물 추가</h3>
+
+    <div class="form-group">
+      <label>사진 URL</label>
+      <input type="text" id="fImage" placeholder="이미지 주소 (비워두면 기본 이모지 사용)">
+    </div>
+    <div class="form-group">
+      <label>이름 <span class="required">*</span></label>
+      <input type="text" id="fName" placeholder="예: 황금향, 브로콜리 등" maxlength="30">
+      <p class="form-error" id="fNameError">⚠ 작물 이름은 필수 입력 항목입니다.</p>
+    </div>
+    <div class="form-group">
+      <label>특징</label>
+      <textarea id="fFeature" rows="2" placeholder="작물의 특징을 입력하세요"></textarea>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>작물 종류</label>
+        <select id="fCategory">
+          <option value="감귤류">감귤류 🍊</option>
+          <option value="뿌리채소">뿌리채소 🥕</option>
+          <option value="엽채류">엽채류 🥦</option>
+          <option value="양념채소">양념채소 🧄</option>
+          <option value="두류">두류 🫘</option>
+          <option value="특용작물">특용작물 🌿</option>
+          <option value="과일류">과일류 🥝</option>
+          <option value="버섯류">버섯류 🍄</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>맛</label>
+        <select id="fTaste">
+          <option value="새콤달콤">새콤달콤</option>
+          <option value="달콤함">달콤함</option>
+          <option value="새콤함">새콤함</option>
+          <option value="아삭함">아삭함</option>
+          <option value="고소함">고소함</option>
+          <option value="알싸함">알싸함</option>
+          <option value="담백함">담백함</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>재배 난이도</label>
+        <select id="fDifficulty">
+          <option value="쉬움">쉬움</option>
+          <option value="보통" selected>보통</option>
+          <option value="어려움">어려움</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>출하 시작 월</label>
+        <select id="fHarvestStart">${monthOptions(11)}</select>
+      </div>
+      <div class="form-group">
+        <label>출하 종료 월</label>
+        <select id="fHarvestEnd">${monthOptions(1)}</select>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>오늘 시세 (원/kg)</label>
+      <input type="number" id="fPrice" min="0" step="10" placeholder="비워두면 '시세 정보 없음'으로 표시">
+    </div>
+
+    <div class="form-group">
+      <label>추천 비료 정보 (선택)</label>
+      <div id="fertilizerInputs"></div>
+      <button type="button" class="btn btn-small btn-white" onclick="addFertilizerRow()">+ 비료 추가</button>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn btn-white" onclick="closeModal()">취소</button>
+      <button class="btn btn-green" onclick="saveNewVariety()">저장</button>
+    </div>`;
+  addFertilizerRow(); // 비료 입력 한 줄 기본 제공
+  openModal();
+}
+
+// 월 선택 옵션 HTML 생성
+function monthOptions(selected) {
+  let html = '';
+  for (let m = 1; m <= 12; m++) {
+    html += `<option value="${m}" ${m === selected ? 'selected' : ''}>${m}월</option>`;
+  }
+  return html;
+}
+
+// 비료 입력 줄 추가
+function addFertilizerRow() {
+  const wrap = document.getElementById('fertilizerInputs');
+  const row = document.createElement('div');
+  row.className = 'fertilizer-input-row';
+  row.innerHTML = `
+    <input type="text" class="fert-name" placeholder="비료명">
+    <input type="text" class="fert-timing" placeholder="시비 시기 (예: 3월)">
+    <input type="text" class="fert-method" placeholder="시비 방법">
+    <button type="button" class="remove-fert" title="삭제" onclick="this.parentElement.remove()">✕</button>`;
+  wrap.appendChild(row);
+}
+
+// 새 품종 저장
+async function saveNewVariety() {
+  const name = document.getElementById('fName').value.trim();
+  const nameError = document.getElementById('fNameError');
+
+  // 필수 항목(이름) 검사
+  if (!name) {
+    nameError.classList.add('show');
+    document.getElementById('fName').focus();
+    return;
+  }
+  nameError.classList.remove('show');
+
+  // 비료 입력 줄들을 배열로 수집 (비료명이 있는 줄만)
+  const fertilizers = [];
+  document.querySelectorAll('.fertilizer-input-row').forEach((row) => {
+    const fname = row.querySelector('.fert-name').value.trim();
+    if (!fname) return;
+    fertilizers.push({
+      name: fname,
+      timing: row.querySelector('.fert-timing').value.trim() || '-',
+      method: row.querySelector('.fert-method').value.trim() || '-'
+    });
+  });
+
+  const priceInput = document.getElementById('fPrice').value;
+  const category = document.getElementById('fCategory').value;
+  const newVariety = {
+    id: 'v' + Date.now(),                              // 고유 id 생성
+    name: name,
+    category: category,
+    feature: document.getElementById('fFeature').value.trim(),
+    taste: document.getElementById('fTaste').value,
+    harvestPeriod: `${document.getElementById('fHarvestStart').value}월~${document.getElementById('fHarvestEnd').value}월`,
+    difficulty: document.getElementById('fDifficulty').value,
+    todayPrice: priceInput ? Number(priceInput) : null, // 미입력 시 "시세 정보 없음"
+    image: document.getElementById('fImage').value.trim(),
+    emoji: CATEGORY_EMOJI[category] || '🌱',
+    fertilizers: fertilizers,
+    isCustom: true                                     // 사용자가 직접 추가한 작물 표시
+  };
+
+  varietyData.push(newVariety);
+  await saveVarieties(); // 구글 시트 + localStorage 저장
+  buildPriceHistory();   // 새 품종의 시세 이력 생성
+  refreshAll();          // 모든 화면 갱신
+  closeModal();
+}
+
+// 품종 삭제 (확인 팝업 → 확인 시에만 삭제)
+async function deleteVariety(id) {
+  const v = findVariety(id);
+  if (!v) return;
+
+  // 기본 제공 품종은 추가 경고 문구를 보여준다
+  const message = v.isCustom
+    ? `정말 '${v.name}'을(를) 삭제하시겠습니까?`
+    : `'${v.name}'은(는) 기본 제공 작물입니다.\n삭제 후에는 복구할 수 없습니다.\n정말 삭제하시겠습니까?`;
+
+  if (!confirm(message)) return;
+
+  varietyData = varietyData.filter((item) => item.id !== id);
+  await saveVarieties();
+  buildPriceHistory();
+  refreshAll();
+  closeModal(); // 상세 모달에서 삭제한 경우 모달 닫기
+}
+
+/* ==========================================================
+   10. 품종 상세 모달 (시세 그래프 + 이력 + 추천 비료)
+   ========================================================== */
+function openVarietyDetail(id) {
+  const v = findVariety(id);
+  if (!v) return;
+
+  const history = priceHistoryMap[id] || [];
+  const change = getChangePercent(v);
+  const imgHtml = v.image
+    ? `<img src="${escapeHtml(v.image)}" alt="${escapeHtml(v.name)}">`
+    : (v.emoji || '🍊');
+
+  // 최근 시세 변동 이력 (최근 10일, 최신순)
+  const recent = history.slice(-11); // 등락 계산을 위해 하루 더
+  let historyHtml = '';
+  for (let i = recent.length - 1; i >= 1; i--) {
+    const cur = recent[i];
+    const prev = recent[i - 1];
+    const pct = prev.price ? ((cur.price - prev.price) / prev.price) * 100 : null;
+    historyHtml += `<li><span>${cur.date}</span><span>${formatPrice(cur.price)}원 ${changeHtml(pct)}</span></li>`;
+  }
+
+  // 추천 비료 테이블
+  const fertHtml = (v.fertilizers && v.fertilizers.length > 0)
+    ? `<table class="detail-table">
+         <tr><th>비료명</th><th>시비 시기</th><th>시비 방법</th></tr>
+         ${v.fertilizers.map((f) => `
+           <tr>
+             <td>${escapeHtml(f.name)}</td>
+             <td>${escapeHtml(f.timing)}</td>
+             <td>${escapeHtml(f.method)}</td>
+           </tr>`).join('')}
+       </table>`
+    : '<p style="font-size:0.85rem;color:var(--text-light);">등록된 추천 비료 정보가 없습니다.</p>';
+
+  // 시세 영역 (시세가 없으면 안내만)
+  const priceSection = v.todayPrice
+    ? `
+      <div class="detail-row"><b>오늘 시세</b> ${formatPrice(v.todayPrice)}원/kg ${changeHtml(change)}</div>
+      <div class="detail-section">
+        <h4>📊 시세 변동 그래프</h4>
+        <div class="chart-toggle">
+          <button class="btn btn-small period-btn active" onclick="switchDetailChart('${id}', 7, this)">7일</button>
+          <button class="btn btn-small period-btn" onclick="switchDetailChart('${id}', 30, this)">30일</button>
+        </div>
+        <canvas class="detail-chart" id="detailChart"></canvas>
+      </div>
+      <div class="detail-section">
+        <h4>🧾 최근 시세 변동 이력</h4>
+        <ul class="history-list">${historyHtml}</ul>
+      </div>`
+    : '<div class="detail-row"><b>오늘 시세</b> 시세 정보 없음</div>';
+
+  const modal = document.getElementById('modalContent');
+  modal.innerHTML = `
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div class="detail-img">${imgHtml}</div>
+    <h3>${escapeHtml(v.name)}
+      ${v.isCustom ? '<span class="badge badge-custom">직접 등록</span>' : ''}
+      <button class="delete-btn" style="position:static; vertical-align:middle; margin-left:6px;"
+        title="작물 삭제" onclick="deleteVariety('${v.id}')">✕</button>
+    </h3>
+    <div class="detail-row"><b>특징</b> ${escapeHtml(v.feature || '-')}</div>
+    <div class="detail-row"><b>맛</b> ${escapeHtml(v.taste || '-')}</div>
+    <div class="detail-row"><b>출하시기</b> ${escapeHtml(v.harvestPeriod || '-')}</div>
+    <div class="detail-row"><b>재배 난이도</b> ${escapeHtml(v.difficulty || '-')}</div>
+    ${priceSection}
+    <div class="detail-section">
+      <h4>🌱 추천 비료</h4>
+      ${fertHtml}
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-orange" onclick="closeModal()">닫기</button>
+    </div>`;
+  openModal();
+
+  // 모달이 화면에 붙은 뒤 그래프 그리기
+  if (v.todayPrice) {
+    requestAnimationFrame(() => drawDetailChart(id, 7));
+  }
+}
+
+// 상세 모달의 7일/30일 그래프 전환
+function switchDetailChart(id, days, btn) {
+  btn.parentElement.querySelectorAll('.period-btn').forEach((b) => b.classList.remove('active'));
+  btn.classList.add('active');
+  drawDetailChart(id, days);
+}
+
+// 상세 모달 그래프 그리기
+function drawDetailChart(id, days) {
+  const canvas = document.getElementById('detailChart');
+  if (!canvas) return;
+  const history = (priceHistoryMap[id] || []).slice(-days);
+  drawLineChart(canvas, history, '#FF8A00');
+}
+
+/* ==========================================================
+   11. 병해충 페이지
+   ========================================================== */
+function renderPestList() {
+  const wrap = document.getElementById('pestList');
+  const keyword = document.getElementById('pestSearch').value.trim().toLowerCase();
+
+  const filtered = PESTS.filter((p) => {
+    if (!keyword) return true;
+    const text = `${p.name} ${p.symptom} ${p.solution} ${p.prevention}`.toLowerCase();
+    return text.includes(keyword);
+  });
+
+  if (filtered.length === 0) {
+    wrap.innerHTML = '<p class="empty-message">검색 결과가 없습니다. 🐛</p>';
+    return;
+  }
+
+  wrap.innerHTML = filtered.map((p) => `
+    <div class="card pest-card" onclick="openPestDetail('${p.id}')">
+      <div class="p-img">${p.emoji}</div>
+      <div class="p-body">
+        <div class="p-name">${escapeHtml(p.name)}</div>
+        <div class="p-row"><b>증상</b> : ${escapeHtml(p.symptom)}</div>
+        <div class="p-row"><b>주의 시기</b> :
+          <span class="badge badge-orange">${p.cautionMonths[0]}~${p.cautionMonths[p.cautionMonths.length - 1]}월</span>
+        </div>
+        <div class="p-row"><b>추천 약제</b> : ${p.pesticides.map((a) => escapeHtml(a.name)).join(', ')}</div>
+      </div>
+    </div>`).join('');
+}
+
+// 병해충 상세 모달
+function openPestDetail(id) {
+  const p = PESTS.find((item) => item.id === id);
+  if (!p) return;
+
+  const pesticideHtml = p.pesticides.map((a) => `
+    <table class="detail-table" style="margin-bottom:10px;">
+      <tr><th style="width:90px;">약제명</th><td>${escapeHtml(a.name)}</td></tr>
+      <tr><th>방제 시기</th><td>${escapeHtml(a.timing)}</td></tr>
+      <tr><th>사용 방법</th><td>${escapeHtml(a.usage)}</td></tr>
+      <tr><th>주의사항</th><td>${escapeHtml(a.caution)}</td></tr>
+    </table>`).join('');
+
+  const modal = document.getElementById('modalContent');
+  modal.innerHTML = `
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div class="detail-img">${p.emoji}</div>
+    <h3>${escapeHtml(p.name)}</h3>
+    <div class="detail-row"><b>증상</b> ${escapeHtml(p.symptom)}</div>
+    <div class="detail-row"><b>해결 방법</b> ${escapeHtml(p.solution)}</div>
+    <div class="detail-row"><b>예방 방법</b> ${escapeHtml(p.prevention)}</div>
+    <div class="detail-row"><b>주의 시기</b>
+      ${p.cautionMonths.map((m) => `<span class="badge badge-orange">${m}월</span>`).join(' ')}
+    </div>
+    <div class="detail-section">
+      <h4>💊 추천 방제 약제</h4>
+      ${pesticideHtml}
+      <p style="font-size:0.75rem;color:var(--text-light);">
+        ※ 약제 정보는 학습용 예시입니다. 실제 사용 시 반드시 농약 안전사용기준을 확인하세요.
+      </p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-orange" onclick="closeModal()">닫기</button>
+    </div>`;
+  openModal();
+}
+
+/* ==========================================================
+   12. 시세 페이지 (정렬 테이블 + 그래프)
+   ========================================================== */
+function renderPricePage() {
+  renderPriceTable();
+  renderChartVarietySelect();
+  renderPriceChart();
+}
+
+// 오늘 시세 요약 테이블
+function renderPriceTable() {
+  const tbody = document.getElementById('priceTableBody');
+
+  // 정렬 기준에 따라 복사본 정렬
+  const sorted = [...varietyData].sort((a, b) => {
+    if (priceSortKey === 'price') {
+      return (b.todayPrice || 0) - (a.todayPrice || 0);            // 시세 높은순
+    }
+    if (priceSortKey === 'change') {
+      return (getChangePercent(b) ?? -999) - (getChangePercent(a) ?? -999); // 등락률순
+    }
+    return a.name.localeCompare(b.name, 'ko');                      // 이름순
+  });
+
+  if (sorted.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--text-light);">등록된 작물이 없습니다.</td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = sorted.map((v) => {
+    const priceText = v.todayPrice ? `${formatPrice(v.todayPrice)}원/kg` : '시세 정보 없음';
+    return `
+      <tr onclick="selectChartVariety('${v.id}')">
+        <td>${v.emoji || '🍊'} ${escapeHtml(v.name)}${v.isCustom ? ' <span class="badge badge-custom">직접 등록</span>' : ''}</td>
+        <td class="num">${priceText}</td>
+        <td>${changeHtml(getChangePercent(v))}</td>
+        <td>${priceUpdatedAt}</td>
+      </tr>`;
+  }).join('');
+}
+
+// 그래프용 품종 선택 드롭다운
+function renderChartVarietySelect() {
+  const select = document.getElementById('chartVarietySelect');
+  const prev = select.value;
+  const withPrice = varietyData.filter((v) => v.todayPrice);
+
+  select.innerHTML = withPrice.length === 0
+    ? '<option value="">시세 데이터가 있는 작물 없음</option>'
+    : withPrice.map((v) => `<option value="${v.id}">${escapeHtml(v.name)}</option>`).join('');
+
+  // 이전 선택 유지 (삭제된 경우 첫 품종)
+  if (prev && withPrice.some((v) => v.id === prev)) select.value = prev;
+}
+
+// 테이블에서 품종 클릭 → 그래프에 표시
+function selectChartVariety(id) {
+  const v = findVariety(id);
+  if (!v || !v.todayPrice) return;
+  document.getElementById('chartVarietySelect').value = id;
+  renderPriceChart();
+  // 그래프 위치로 부드럽게 스크롤
+  document.querySelector('.chart-panel').scrollIntoView({ behavior: 'smooth' });
+}
+
+// 시세 추이 그래프 렌더링
+function renderPriceChart() {
+  const canvas = document.getElementById('priceChart');
+  const id = document.getElementById('chartVarietySelect').value;
+  const history = priceHistoryMap[id] || [];
+  const data = chartPeriod === 'all' ? history : history.slice(-chartPeriod);
+  drawLineChart(canvas, data, '#4CAF50');
+}
+
+/* ==========================================================
+   13. 라인 차트 그리기 (Canvas, 외부 라이브러리 없이 구현)
+   ========================================================== */
+function drawLineChart(canvas, data, lineColor) {
+  const ctx = canvas.getContext('2d');
+  const dpr = window.devicePixelRatio || 1;
+  const width = canvas.clientWidth || 300;
+  const height = canvas.clientHeight || 200;
+
+  // 고해상도 화면 대응
+  canvas.width = width * dpr;
+  canvas.height = height * dpr;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.clearRect(0, 0, width, height);
+
+  if (!data || data.length === 0) {
+    ctx.fillStyle = '#999';
+    ctx.font = '14px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('표시할 시세 데이터가 없습니다.', width / 2, height / 2);
+    return;
+  }
+
+  const pad = { top: 20, right: 20, bottom: 30, left: 56 };
+  const chartW = width - pad.left - pad.right;
+  const chartH = height - pad.top - pad.bottom;
+
+  const prices = data.map((d) => d.price);
+  let min = Math.min(...prices);
+  let max = Math.max(...prices);
+  if (min === max) { min -= 100; max += 100; } // 값이 모두 같을 때 대비
+  const range = max - min;
+
+  // x, y 좌표 계산 함수
+  const xOf = (i) => pad.left + (data.length === 1 ? chartW / 2 : (chartW * i) / (data.length - 1));
+  const yOf = (p) => pad.top + chartH - ((p - min) / range) * chartH;
+
+  // ----- 가로 격자선 + 가격 라벨 -----
+  ctx.strokeStyle = '#EEEEEE';
+  ctx.fillStyle = '#888';
+  ctx.font = '11px sans-serif';
+  ctx.textAlign = 'right';
+  const gridCount = 4;
+  for (let g = 0; g <= gridCount; g++) {
+    const value = min + (range * g) / gridCount;
+    const y = yOf(value);
+    ctx.beginPath();
+    ctx.moveTo(pad.left, y);
+    ctx.lineTo(width - pad.right, y);
+    ctx.stroke();
+    ctx.fillText(formatPrice(Math.round(value)), pad.left - 8, y + 4);
+  }
+
+  // ----- x축 날짜 라벨 (처음 / 중간 / 끝) -----
+  ctx.textAlign = 'center';
+  const labelIdx = [0, Math.floor((data.length - 1) / 2), data.length - 1];
+  [...new Set(labelIdx)].forEach((i) => {
+    const label = data[i].date.slice(5); // "MM-DD"
+    ctx.fillText(label, xOf(i), height - 8);
+  });
+
+  // ----- 선 아래 영역 채우기 -----
+  const gradient = ctx.createLinearGradient(0, pad.top, 0, pad.top + chartH);
+  gradient.addColorStop(0, lineColor + '4D'); // 30% 투명
+  gradient.addColorStop(1, lineColor + '00'); // 완전 투명
+  ctx.beginPath();
+  data.forEach((d, i) => {
+    const x = xOf(i), y = yOf(d.price);
+    i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+  });
+  ctx.lineTo(xOf(data.length - 1), pad.top + chartH);
+  ctx.lineTo(xOf(0), pad.top + chartH);
+  ctx.closePath();
+  ctx.fillStyle = gradient;
+  ctx.fill();
+
+  // ----- 시세 라인 -----
+  ctx.beginPath();
+  data.forEach((d, i) => {
+    const x = xOf(i), y = yOf(d.price);
+    i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+  });
+  ctx.strokeStyle = lineColor;
+  ctx.lineWidth = 2.5;
+  ctx.lineJoin = 'round';
+  ctx.stroke();
+
+  // ----- 데이터 포인트 (개수가 적을 때만) -----
+  if (data.length <= 31) {
+    data.forEach((d, i) => {
+      ctx.beginPath();
+      ctx.arc(xOf(i), yOf(d.price), 3, 0, Math.PI * 2);
+      ctx.fillStyle = '#FFFFFF';
+      ctx.fill();
+      ctx.strokeStyle = lineColor;
+      ctx.lineWidth = 2;
+      ctx.stroke();
+    });
+  }
+
+  // ----- 마지막 값 강조 -----
+  const last = data[data.length - 1];
+  ctx.fillStyle = lineColor;
+  ctx.font = 'bold 12px sans-serif';
+  ctx.textAlign = 'right';
+  ctx.fillText(`${formatPrice(last.price)}원`, width - pad.right, yOf(last.price) - 10);
+}
+
+/* ==========================================================
+   14. 오늘의 할일 페이지 (날씨 기반)
+   ========================================================== */
+function renderTodoPage() {
+  renderRegionTabs();
+  renderTodoWeatherSummary();
+  renderTodoList();
+  renderTodoMonthlyTasks();
+}
+
+// 지역 선택 탭
+function renderRegionTabs() {
+  const wrap = document.getElementById('regionTabs');
+  wrap.innerHTML = REGIONS.map((r) => `
+    <button class="region-tab ${r.id === selectedRegion ? 'active' : ''}"
+      onclick="selectRegion('${r.id}')">${r.name}</button>`).join('');
+}
+
+function selectRegion(id) {
+  selectedRegion = id;
+  renderTodoPage();
+}
+
+// 오늘 날씨 요약 (기온, 강수 확률, 풍속)
+function renderTodoWeatherSummary() {
+  const wrap = document.getElementById('todoWeatherSummary');
+  const w = weatherData[selectedRegion];
+  const regionName = REGIONS.find((r) => r.id === selectedRegion).name;
+
+  if (!w) {
+    wrap.innerHTML = '<span>⏳ 날씨 정보를 불러오는 중입니다...</span>';
+    return;
+  }
+  const info = weatherCodeToInfo(w.weatherCode);
+  wrap.innerHTML = `
+    <span class="big-icon">${info.icon}</span>
+    <div class="w-item"><b>${regionName}</b> · ${info.label}</div>
+    <div class="w-item">🌡️ 기온 <b>${w.temp}℃</b></div>
+    <div class="w-item">☔ 강수 확률 <b>${w.rainProb}%</b></div>
+    <div class="w-item">🌬️ 풍속 <b>${w.windSpeed}m/s</b></div>
+    ${w.isFallback ? '<div class="w-item" style="color:var(--up);font-size:0.8rem;">⚠ 예시 데이터 표시 중</div>' : ''}`;
+}
+
+// 날씨 조건에 맞는 할 일 체크리스트 생성
+function renderTodoList() {
+  const wrap = document.getElementById('todoList');
+  const w = weatherData[selectedRegion];
+
+  if (!w) {
+    wrap.innerHTML = '<li class="todo-item"><span>⏳ 날씨 정보를 불러오는 중입니다...</span></li>';
+    return;
+  }
+
+  // 조건에 해당하는 규칙만 골라낸다
+  const todos = WEATHER_TODO_RULES.filter((rule) => rule.check(w));
+
+  if (todos.length === 0) {
+    wrap.innerHTML = '<li class="todo-item"><span class="t-emoji">😊</span><label>오늘은 특별한 주의사항이 없습니다. 평소 관리 작업을 진행하세요.</label></li>';
+    return;
+  }
+
+  wrap.innerHTML = todos.map((rule, i) => `
+    <li class="todo-item" id="todoItem${i}">
+      <input type="checkbox" id="todoCheck${i}"
+        onchange="document.getElementById('todoItem${i}').classList.toggle('done', this.checked)">
+      <span class="t-emoji">${rule.emoji}</span>
+      <label for="todoCheck${i}">${rule.text}</label>
+    </li>`).join('');
+}
+
+// 이번 달 정기 작업 (농사 캘린더 데이터 재사용)
+function renderTodoMonthlyTasks() {
+  const wrap = document.getElementById('todoMonthlyTasks');
+  const month = new Date().getMonth() + 1;
+  const tasks = MONTHLY_TASKS[month] || [];
+  wrap.innerHTML = `
+    <p style="font-weight:700; margin-bottom:8px;">🗓️ ${month}월 정기 작업</p>
+    <ul>${tasks.map((t) => `<li>${escapeHtml(t)}</li>`).join('')}</ul>`;
+}
+
+/* ==========================================================
+   15. 농사 캘린더 페이지
+   ========================================================== */
+function renderCalendarPage() {
+  renderCalendarLegend();
+  renderCalendarGrid();
+  renderCalendarTasks();
+  renderCalendarPestWarnings();
+}
+
+// 작업 카테고리 색상 범례
+function renderCalendarLegend() {
+  const wrap = document.getElementById('calendarLegend');
+  if (!wrap) return;
+  wrap.innerHTML = TASK_CATEGORIES.map((c) => `
+    <div class="legend-item">
+      <span class="legend-dot" style="background:${c.color};"></span>${escapeHtml(c.label)}
+    </div>`).join('');
+}
+
+// 달력 그리드
+function renderCalendarGrid() {
+  document.getElementById('calendarTitle').textContent = `${calendarYear}년 ${calendarMonth}월`;
+
+  const grid = document.getElementById('calendarGrid');
+  const dayNames = ['일', '월', '화', '수', '목', '금', '토'];
+  const today = new Date();
+
+  let html = dayNames.map((d, i) =>
+    `<div class="day-head ${i === 0 ? 'sun' : ''} ${i === 6 ? 'sat' : ''}">${d}</div>`).join('');
+
+  const firstDay = new Date(calendarYear, calendarMonth - 1, 1).getDay(); // 1일의 요일
+  const lastDate = new Date(calendarYear, calendarMonth, 0).getDate();    // 이번 달 마지막 날
+
+  // 1일 이전 빈 칸
+  for (let i = 0; i < firstDay; i++) html += '<div class="calendar-cell empty"></div>';
+
+  // 날짜 칸
+  for (let d = 1; d <= lastDate; d++) {
+    const dayOfWeek = (firstDay + d - 1) % 7;
+    const isToday = calendarYear === today.getFullYear()
+      && calendarMonth === today.getMonth() + 1
+      && d === today.getDate();
+
+    // 이 날짜에 등록된 개인 할 일 → 카테고리 색상 점으로 표시 (최대 4개, 초과분은 +N)
+    const key = dateKey(calendarYear, calendarMonth, d);
+    const dayTasks = calendarTasksData[key] || [];
+    const maxDots = 4;
+    let dotsHtml = dayTasks.slice(0, maxDots).map((t) =>
+      `<span class="task-dot" style="background:${taskCategory(t.category).color};"></span>`).join('');
+    if (dayTasks.length > maxDots) dotsHtml += `<span class="task-dot more">+${dayTasks.length - maxDots}</span>`;
+
+    html += `<div class="calendar-cell
+      ${dayOfWeek === 0 ? 'sun' : ''} ${dayOfWeek === 6 ? 'sat' : ''}
+      ${isToday ? 'today' : ''}" onclick="openDayModal(${calendarYear}, ${calendarMonth}, ${d})">
+      <span class="cell-date">${d}</span>
+      <div class="task-dots">${dotsHtml}</div>
+    </div>`;
+  }
+  grid.innerHTML = html;
+}
+
+// 이번 달 해야 할 일
+function renderCalendarTasks() {
+  const wrap = document.getElementById('calendarTasks');
+  const tasks = MONTHLY_TASKS[calendarMonth] || [];
+  wrap.innerHTML = tasks.length
+    ? `<ul>${tasks.map((t) => `<li>${escapeHtml(t)}</li>`).join('')}</ul>`
+    : '<p>이 달의 등록된 작업이 없습니다.</p>';
+}
+
+// 이번 달 주의 병해충 (병해충 데이터의 "주의 시기" 값과 연동)
+function renderCalendarPestWarnings() {
+  const wrap = document.getElementById('calendarPestWarnings');
+  const warned = PESTS.filter((p) => p.cautionMonths.includes(calendarMonth));
+
+  if (warned.length === 0) {
+    wrap.innerHTML = '<p style="color:var(--text-light);">이 달에 특별히 주의할 병해충이 없습니다. 🌿</p>';
+    return;
+  }
+  // 병해충 이름 클릭 → 병해충 상세로 이동
+  wrap.innerHTML = warned.map((p) => `
+    <div class="pest-warning-card" onclick="goToPestDetail('${p.id}')">
+      ⚠ ${escapeHtml(p.name)} 주의 시기입니다
+    </div>`).join('');
+}
+
+/* ==========================================================
+   15-1. 일별 할 일 추가/확인 모달
+   - 달력의 날짜를 클릭하면 그 날의 할 일 목록을 보여주고
+     새 할 일을 추가할 수 있다 (카테고리별 색상 지정).
+   ========================================================== */
+function openDayModal(y, m, d) {
+  openDayInfo = { y, m, d };
+  const key = dateKey(y, m, d);
+  const tasks = calendarTasksData[key] || [];
+  const dayOfWeek = new Date(y, m - 1, d).getDay();
+  const dayNames = ['일', '월', '화', '수', '목', '금', '토'];
+
+  const modal = document.getElementById('modalContent');
+  modal.innerHTML = `
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <h3>📅 ${y}년 ${m}월 ${d}일 (${dayNames[dayOfWeek]})</h3>
+
+    <div class="day-task-list" id="dayTaskList">
+      ${tasks.length ? tasks.map((t) => `
+        <div class="day-task-item">
+          <span class="dt-color" style="background:${taskCategory(t.category).color};"></span>
+          <div class="dt-body">
+            <div class="dt-title">${escapeHtml(t.title)}</div>
+            <div class="dt-cat">${escapeHtml(taskCategory(t.category).label)}</div>
+            ${t.memo ? `<div class="dt-memo">${escapeHtml(t.memo)}</div>` : ''}
+          </div>
+          <button type="button" class="dt-remove" title="삭제" onclick="deleteCalendarTask('${t.id}')">✕</button>
+        </div>`).join('') : ''}
+    </div>
+    ${tasks.length ? '' : '<p class="day-task-empty">이 날 등록된 할 일이 없습니다. 아래에서 추가해 보세요 🍊</p>'}
+
+    <div class="form-group">
+      <label>할 일 <span class="required">*</span></label>
+      <input type="text" id="dtTitle" placeholder="예: 3구역 비료 주기" maxlength="40">
+      <p class="form-error" id="dtTitleError">⚠ 할 일 내용을 입력해 주세요.</p>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>작업 종류</label>
+        <select id="dtCategory">
+          ${TASK_CATEGORIES.map((c) => `<option value="${c.id}">${escapeHtml(c.label)}</option>`).join('')}
+        </select>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>메모 (선택)</label>
+      <textarea id="dtMemo" rows="2" placeholder="추가로 기록해둘 내용이 있다면 입력하세요"></textarea>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn btn-white" onclick="closeModal()">닫기</button>
+      <button class="btn btn-green" onclick="addCalendarTask()">할 일 추가</button>
+    </div>`;
+  openModal();
+}
+
+// 새 할 일 추가
+async function addCalendarTask() {
+  if (!openDayInfo) return;
+  const title = document.getElementById('dtTitle').value.trim();
+  const titleError = document.getElementById('dtTitleError');
+
+  if (!title) {
+    titleError.classList.add('show');
+    document.getElementById('dtTitle').focus();
+    return;
+  }
+  titleError.classList.remove('show');
+
+  const { y, m, d } = openDayInfo;
+  const key = dateKey(y, m, d);
+  if (!calendarTasksData[key]) calendarTasksData[key] = [];
+
+  calendarTasksData[key].push({
+    id: 't' + Date.now(),
+    title: title,
+    category: document.getElementById('dtCategory').value,
+    memo: document.getElementById('dtMemo').value.trim()
+  });
+
+  await saveCalendarTasks();
+  renderCalendarGrid();      // 달력 칸의 색상 점 갱신
+  openDayModal(y, m, d);     // 모달 안 목록/입력창 새로고침
+}
+
+// 할 일 삭제
+async function deleteCalendarTask(taskId) {
+  if (!openDayInfo) return;
+  const { y, m, d } = openDayInfo;
+  const key = dateKey(y, m, d);
+  if (!calendarTasksData[key]) return;
+
+  calendarTasksData[key] = calendarTasksData[key].filter((t) => t.id !== taskId);
+  if (calendarTasksData[key].length === 0) delete calendarTasksData[key];
+
+  await saveCalendarTasks();
+  renderCalendarGrid();
+  openDayModal(y, m, d);
+}
+
+// 캘린더 월 이동
+function moveCalendarMonth(delta) {
+  calendarMonth += delta;
+  if (calendarMonth < 1) { calendarMonth = 12; calendarYear--; }
+  if (calendarMonth > 12) { calendarMonth = 1; calendarYear++; }
+  renderCalendarPage();
+}
+
+// 메인의 월 일정 클릭 → 캘린더 해당 월로 이동
+function goToCalendarMonth(month) {
+  calendarMonth = month;
+  calendarYear = new Date().getFullYear();
+  navigate('calendar');
+}
+
+/* ==========================================================
+   15-1. 작물별 자동 순수익 계산기
+   - 기존 varietyData의 todayPrice(시세)를 그대로 재사용한다 (시세 재입력 X)
+   - CROP_FARM_DATA의 면적당 평균 생산량/생산비 데이터를 사용한다
+   - 총생산량 = 면적 × 면적당 평균 생산량
+   - 매출     = 총생산량 × 현재 시세
+   - 총생산비 = 면적 × 면적당 평균 생산비
+   - 예상 순수익 = 매출 − 총생산비
+   ========================================================== */
+let autoProfitAreaUnit = 'pyeong'; // 'pyeong' 또는 'm2'
+
+function initAutoProfitCalculator() {
+  populateAutoProfitCropSelect();
+
+  document.getElementById('autoProfitCrop').addEventListener('change', calculateAutoProfit);
+  document.getElementById('autoProfitArea').addEventListener('input', calculateAutoProfit);
+
+  document.querySelectorAll('#autoProfitAreaUnit button').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('#autoProfitAreaUnit button').forEach((b) => b.classList.remove('active'));
+      btn.classList.add('active');
+      autoProfitAreaUnit = btn.dataset.unit;
+      calculateAutoProfit();
+    });
+  });
+}
+
+// 드롭다운을 varietyData 기준으로 채운다 (품종 추가/삭제 시 refreshAll에서 재호출됨)
+function populateAutoProfitCropSelect() {
+  const select = document.getElementById('autoProfitCrop');
+  if (!select) return;
+  const prevValue = select.value;
+
+  select.innerHTML = varietyData.map((v) => {
+    const hasData = v.todayPrice && CROP_FARM_DATA[v.id];
+    return `<option value="${v.id}" ${hasData ? '' : 'disabled'}>${v.emoji || '🍊'} ${escapeHtml(v.name)}${hasData ? '' : ' (데이터 없음)'}</option>`;
+  }).join('');
+
+  // 이전 선택값이 여전히 존재하면 유지, 아니면 첫 유효 품종 선택
+  const stillExists = varietyData.some((v) => v.id === prevValue);
+  if (stillExists) {
+    select.value = prevValue;
+  } else {
+    const firstValid = varietyData.find((v) => v.todayPrice && CROP_FARM_DATA[v.id]);
+    if (firstValid) select.value = firstValid.id;
+  }
+
+  calculateAutoProfit();
+}
+
+function calculateAutoProfit() {
+  const select = document.getElementById('autoProfitCrop');
+  const resultCard = document.getElementById('autoProfitResultCard');
+  const errorBox = document.getElementById('autoProfitError');
+  const areaInput = parseFloat(document.getElementById('autoProfitArea').value);
+
+  if (!select || !resultCard) return;
+
+  const cropId = select.value;
+  const variety = varietyData.find((v) => v.id === cropId);
+  const farmData = CROP_FARM_DATA[cropId];
+
+  // 재배면적이 아직 유효하지 않으면 안내만 표시
+  if (isNaN(areaInput) || areaInput <= 0) {
+    errorBox.classList.toggle('show', document.getElementById('autoProfitArea').value !== '');
+    resultCard.innerHTML = `<div class="profit-empty">👈 작물을 선택하고 재배면적을 입력하면<br>실시간으로 예상 순수익을 계산해 드려요 🍊</div>`;
+    return;
+  }
+  errorBox.classList.remove('show');
+
+  // 선택한 작물의 시세/생산 데이터가 없는 경우
+  if (!variety || !variety.todayPrice || !farmData) {
+    resultCard.innerHTML = `<div class="profit-empty">😢 선택한 작물은 시세 또는 생산량 정보가 없어<br>계산할 수 없습니다</div>`;
+    return;
+  }
+
+  // 재배면적을 ㎡ 기준으로 통일 (1평 = 3.305785㎡)
+  const areaM2 = autoProfitAreaUnit === 'pyeong' ? areaInput * M2_PER_PYEONG : areaInput;
+  const unitLabel = autoProfitAreaUnit === 'pyeong' ? '평' : '㎡';
+
+  const currentPrice = variety.todayPrice;                      // 현재 시세 (원/kg) - 기존 데이터 재사용
+  const totalYield = areaM2 * farmData.yieldPerM2;               // 예상 총생산량 (kg)
+  const totalRevenue = totalYield * currentPrice;                // 예상 매출 (원)
+  const totalCost = areaM2 * farmData.costPerM2;                 // 예상 총생산비 (원)
+  const netProfit = totalRevenue - totalCost;                    // 예상 순수익 (원)
+
+  resultCard.innerHTML = `
+    <div class="profit-result-main">
+      <div class="label">${escapeHtml(variety.emoji || '🍊')} ${escapeHtml(variety.name)} · ${formatPrice(areaInput)}${escapeHtml(unitLabel)} 예상 순수익</div>
+      <div class="value ${netProfit < 0 ? 'negative' : ''}">${formatPrice(Math.round(netProfit))}원</div>
+      <div class="sub">${netProfit < 0 ? '⚠️ 예상 순수익이 적자입니다' : '🍊 현재 시세 기준 자동 계산 결과입니다'}</div>
+    </div>
+    <ul class="profit-breakdown">
+      <li><span>선택 작물</span><span>${escapeHtml(variety.emoji || '🍊')} ${escapeHtml(variety.name)}</span></li>
+      <li><span>재배면적</span><span>${formatPrice(areaInput)}${escapeHtml(unitLabel)}</span></li>
+      <li><span>현재 시세</span><span>${formatPrice(currentPrice)}원/kg</span></li>
+      <li><span>예상 총생산량</span><span>${formatPrice(Math.round(totalYield))}kg</span></li>
+      <li><span>예상 매출</span><span>${formatPrice(Math.round(totalRevenue))}원</span></li>
+      <li><span>예상 총생산비</span><span>${formatPrice(Math.round(totalCost))}원</span></li>
+      <li><span>예상 순수익</span><span>${formatPrice(Math.round(netProfit))}원</span></li>
+    </ul>
+  `;
+}
+
+/* ==========================================================
+   16. 면적당 순수익 계산기
+   면적당 순수익 = (생산량 × 판매단가 − 총비용) ÷ 재배면적
+   ========================================================== */
+let profitAreaUnit = 'm2'; // 'm2' 또는 'ha'
+
+function initProfitCalculator() {
+  document.querySelectorAll('#profitAreaUnit button').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('#profitAreaUnit button').forEach((b) => b.classList.remove('active'));
+      btn.classList.add('active');
+      profitAreaUnit = btn.dataset.unit;
+    });
+  });
+  document.getElementById('profitCalcBtn').addEventListener('click', calculateProfit);
+}
+
+function calculateProfit() {
+  const yieldKg = parseFloat(document.getElementById('profitYield').value);
+  const price = parseFloat(document.getElementById('profitPrice').value);
+  const cost = parseFloat(document.getElementById('profitCost').value);
+  const areaInput = parseFloat(document.getElementById('profitArea').value);
+  const errorBox = document.getElementById('profitError');
+  const resultCard = document.getElementById('profitResultCard');
+
+  const valid = [yieldKg, price, cost, areaInput].every((v) => !isNaN(v) && v >= 0) && areaInput > 0;
+  if (!valid) {
+    errorBox.classList.add('show');
+    return;
+  }
+  errorBox.classList.remove('show');
+
+  // 재배면적을 ㎡ 기준으로 통일 (1ha = 10,000㎡)
+  const areaM2 = profitAreaUnit === 'ha' ? areaInput * 10000 : areaInput;
+
+  const totalRevenue = yieldKg * price;      // 총 판매액
+  const netProfit = totalRevenue - cost;      // 총 순수익
+  const profitPerM2 = netProfit / areaM2;     // ㎡당 순수익
+  const profitPerHa = profitPerM2 * 10000;    // ha당 순수익
+
+  const unitLabel = profitAreaUnit === 'ha' ? 'ha' : '㎡';
+  const profitPerUnit = profitAreaUnit === 'ha' ? profitPerHa : profitPerM2;
+
+  resultCard.innerHTML = `
+    <div class="profit-result-main">
+      <div class="label">면적당 순수익 (1${escapeHtml(unitLabel)}당)</div>
+      <div class="value ${profitPerUnit < 0 ? 'negative' : ''}">${formatPrice(Math.round(profitPerUnit))}원</div>
+      <div class="sub">${netProfit < 0 ? '⚠️ 총 순수익이 적자입니다' : '🍊 입력하신 조건 기준 계산 결과입니다'}</div>
+    </div>
+    <ul class="profit-breakdown">
+      <li><span>총 판매액</span><span>${formatPrice(Math.round(totalRevenue))}원</span></li>
+      <li><span>총비용</span><span>${formatPrice(Math.round(cost))}원</span></li>
+      <li><span>총 순수익</span><span>${formatPrice(Math.round(netProfit))}원</span></li>
+      <li><span>재배면적</span><span>${formatPrice(areaInput)}${escapeHtml(unitLabel)}</span></li>
+      <li><span>㎡당 순수익</span><span>${formatPrice(Math.round(profitPerM2))}원</span></li>
+      <li><span>ha당 순수익</span><span>${formatPrice(Math.round(profitPerHa))}원</span></li>
+    </ul>
+  `;
+}
+
+/* ==========================================================
+   17. 통합 검색 (품종 / 병해충 / 시세 실시간 검색)
+   ========================================================== */
+function runGlobalSearch() {
+  const input = document.getElementById('globalSearch');
+  const resultBox = document.getElementById('searchResults');
+  const keyword = input.value.trim().toLowerCase();
+
+  if (!keyword) {
+    resultBox.classList.remove('open');
+    return;
+  }
+
+  const results = [];
+
+  // 품종 검색 (사용자가 추가한 품종도 실시간 반영)
+  varietyData.forEach((v) => {
+    const text = `${v.name} ${v.feature} ${v.taste}`.toLowerCase();
+    if (text.includes(keyword)) {
+      results.push({
+        type: 'variety', label: v.name, desc: v.harvestPeriod,
+        action: `goToVarietyDetail('${v.id}')`
+      });
+    }
+  });
+
+  // 병해충 검색
+  PESTS.forEach((p) => {
+    const text = `${p.name} ${p.symptom} ${p.solution}`.toLowerCase();
+    if (text.includes(keyword)) {
+      results.push({
+        type: 'pest', label: p.name, desc: '병해충 정보',
+        action: `goToPestDetail('${p.id}')`
+      });
+    }
+  });
+
+  // 시세 검색 (시세가 있는 품종)
+  varietyData.forEach((v) => {
+    if (!v.todayPrice) return;
+    if (v.name.toLowerCase().includes(keyword)) {
+      results.push({
+        type: 'price', label: `${v.name} 시세`,
+        desc: `${formatPrice(v.todayPrice)}원/kg`,
+        action: `goToPriceDetail('${v.id}')`
+      });
+    }
+  });
+
+  const tagName = { variety: '작물', pest: '병해충', price: '시세' };
+  resultBox.innerHTML = results.length === 0
+    ? '<div class="search-empty">검색 결과가 없습니다 🍊</div>'
+    : results.map((r) => `
+        <div class="search-result-item" onclick="${r.action}; closeSearch();">
+          <span class="tag tag-${r.type}">${tagName[r.type]}</span>
+          <span><b>${escapeHtml(r.label)}</b>
+            <span style="color:var(--text-light);font-size:0.8rem;"> ${escapeHtml(r.desc || '')}</span>
+          </span>
+        </div>`).join('');
+  resultBox.classList.add('open');
+}
+
+function closeSearch() {
+  document.getElementById('globalSearch').value = '';
+  document.getElementById('searchResults').classList.remove('open');
+}
+
+/* ==========================================================
+   18. 페이지 이동 (해시 기반 라우팅)
+   ========================================================== */
+function navigate(pageId) {
+  location.hash = pageId; // hashchange 이벤트가 route()를 호출한다
+}
+
+function route() {
+  const pageId = (location.hash || '#home').replace('#', '') || 'home';
+  const valid = ['home', 'variety', 'pest', 'price', 'profit', 'todo', 'calendar'];
+  const target = valid.includes(pageId) ? pageId : 'home';
+
+  // 페이지 표시 전환
+  document.querySelectorAll('.page').forEach((el) => el.classList.remove('active'));
+  document.getElementById(`page-${target}`).classList.add('active');
+
+  // 메뉴 active 표시
+  document.querySelectorAll('nav.main-nav a').forEach((a) => {
+    a.classList.toggle('active', a.dataset.page === target);
+  });
+
+  // 모바일 메뉴 닫기
+  document.getElementById('mainNav').classList.remove('open');
+
+  // 페이지별 렌더링 갱신
+  if (target === 'price') renderPricePage();
+  if (target === 'todo') renderTodoPage();
+  if (target === 'calendar') renderCalendarPage();
+
+  window.scrollTo({ top: 0 });
+  observeFadeIn(); // 스크롤 애니메이션 재적용
+}
+
+// 바로가기: 페이지 이동 후 상세 모달 열기
+function goToVarietyDetail(id) {
+  navigate('variety');
+  setTimeout(() => openVarietyDetail(id), 150);
+}
+function goToPestDetail(id) {
+  navigate('pest');
+  setTimeout(() => openPestDetail(id), 150);
+}
+function goToPriceDetail(id) {
+  navigate('price');
+  setTimeout(() => selectChartVariety(id), 150);
+}
+
+/* ==========================================================
+   19. 모달 열기/닫기
+   ========================================================== */
+function openModal() {
+  document.getElementById('modalOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden'; // 배경 스크롤 잠금
+}
+function closeModal() {
+  document.getElementById('modalOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+  openDayInfo = null;
+}
+
+/* ==========================================================
+   20. 스크롤 애니메이션 (IntersectionObserver)
+   ========================================================== */
+const fadeObserver = new IntersectionObserver((entries) => {
+  entries.forEach((entry) => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+      fadeObserver.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.1 });
+
+function observeFadeIn() {
+  document.querySelectorAll('.fade-in:not(.visible)').forEach((el) => fadeObserver.observe(el));
+}
+
+/* ==========================================================
+   21. 전체 화면 갱신 (품종 추가/삭제 시 호출)
+   - 품종 페이지 / 메인 바로가기 / 오늘의 시세 / 시세 페이지 /
+     통합 검색까지 자동 반영된다.
+   ========================================================== */
+function refreshAll() {
+  renderVarietyList();
+  renderHomeVarietyCards();
+  renderHomePriceCards();
+  renderPricePage();
+  populateAutoProfitCropSelect(); // 작물별 자동 순수익 계산기 드롭다운도 갱신
+  runGlobalSearch(); // 검색창이 열려 있으면 결과도 갱신
+}
+
+/* ==========================================================
+   22. 이벤트 연결 및 초기화
+   ========================================================== */
+function bindEvents() {
+  // 통합 검색 (실시간)
+  document.getElementById('globalSearch').addEventListener('input', runGlobalSearch);
+  // 검색창 바깥 클릭 시 결과 닫기
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.search-box')) {
+      document.getElementById('searchResults').classList.remove('open');
+    }
+  });
+
+  // 햄버거 메뉴
+  document.getElementById('hamburgerBtn').addEventListener('click', () => {
+    document.getElementById('mainNav').classList.toggle('open');
+  });
+
+  // 품종 페이지 : 검색 + 필터
+  document.getElementById('varietySearch').addEventListener('input', renderVarietyList);
+  ['filterCategory', 'filterHarvest', 'filterTaste', 'filterDifficulty', 'filterPrice'].forEach((id) => {
+    document.getElementById(id).addEventListener('change', renderVarietyList);
+  });
+
+  // 품종 추가 버튼
+  document.getElementById('addVarietyBtn').addEventListener('click', openAddVarietyModal);
+
+  // 면적당 순수익 계산기 (작물별 자동 계산 + 직접 입력 계산)
+  initAutoProfitCalculator();
+  initProfitCalculator();
+
+  // 병해충 검색
+  document.getElementById('pestSearch').addEventListener('input', renderPestList);
+
+  // 시세 페이지 : 정렬 버튼
+  document.querySelectorAll('.sort-buttons .btn').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.sort-buttons .btn').forEach((b) => b.classList.remove('active'));
+      btn.classList.add('active');
+      priceSortKey = btn.dataset.sort;
+      renderPriceTable();
+    });
+  });
+
+  // 시세 페이지 : 그래프 기간 버튼
+  document.querySelectorAll('.chart-controls .period-btn').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.chart-controls .period-btn').forEach((b) => b.classList.remove('active'));
+      btn.classList.add('active');
+      chartPeriod = btn.dataset.period === 'all' ? 'all' : parseInt(btn.dataset.period, 10);
+      renderPriceChart();
+    });
+  });
+
+  // 시세 페이지 : 그래프 품종 선택
+  document.getElementById('chartVarietySelect').addEventListener('change', renderPriceChart);
+
+  // 캘린더 월 이동
+  document.getElementById('prevMonthBtn').addEventListener('click', () => moveCalendarMonth(-1));
+  document.getElementById('nextMonthBtn').addEventListener('click', () => moveCalendarMonth(1));
+
+  // 모달 : 배경 클릭 시 닫기
+  document.getElementById('modalOverlay').addEventListener('click', (e) => {
+    if (e.target.id === 'modalOverlay') closeModal();
+  });
+  // 모달 : ESC 키로 닫기
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeModal();
+  });
+
+  // 해시 변경 → 페이지 전환
+  window.addEventListener('hashchange', route);
+
+  // 창 크기 변경 시 그래프 다시 그리기
+  window.addEventListener('resize', () => {
+    if (document.getElementById('page-price').classList.contains('active')) renderPriceChart();
+  });
+}
+
+// ----- 초기화 -----
+async function init() {
+  // 캘린더는 현재 연/월로 시작
+  const now = new Date();
+  calendarYear = now.getFullYear();
+  calendarMonth = now.getMonth() + 1;
+
+  // 구글 시트(Apps Script)에서 품종 / 캘린더 할 일을 불러온다.
+  // 서버 연결이 안 되면 자동으로 localStorage/기본 데이터로 대체된다.
+  await Promise.all([
+    loadVarieties(),
+    loadCalendarTasks()
+  ]);
+  buildPriceHistory();  // 시세 이력 예시 데이터 생성
+
+  bindEvents();
+
+  // 첫 렌더링
+  renderHomePriceCards();
+  renderHomeVarietyCards();
+  renderHomePestCards();
+  renderHomeMonthStrip();
+  renderVarietyList();
+  renderPestList();
+  renderPricePage();
+  renderWeatherBanner(false); // 로딩 중 표시
+  route();
+
+  // 날씨 : 즉시 1회 + 30분마다 자동 갱신
+  loadAllWeather();
+  setInterval(loadAllWeather, WEATHER_REFRESH_MS);
+}
+
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>
